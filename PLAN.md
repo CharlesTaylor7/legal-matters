@@ -24,7 +24,7 @@ This document outlines the step-by-step implementation plan for the Customer & M
         version: '3.8'
         services:
           db:
-            image: postgres:15 # Or your preferred version
+            image: postgres:17 
             restart: always
             environment:
               POSTGRES_USER: your_db_user
