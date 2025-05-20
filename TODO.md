@@ -1,10 +1,9 @@
 # General
-- [x] Write up tech stack
-- [ ] GEt it reviewed by AI
+- step 3 docker setup
+- [ ] Generate api docs (swagger or other)
 
 # Backend
 - [ ] implement backend
-- [ ] Generate api docs (swagger or other)
 - [ ] Validate api
 
 # FRontend

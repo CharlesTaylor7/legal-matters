@@ -17,7 +17,8 @@ This document outlines the step-by-step implementation plan for the Customer & M
 2.  **Configure ESLint & Prettier**:
     *   `create-t3-app` usually sets these up. Review configurations and ensure they meet project standards.
 
-3.  **Set up Docker for PostgreSQL**:
+3.  **Set up Docker**:
+   * Dockerize the next.js app
     *   Create a `docker-compose.yml` file to define a PostgreSQL service.
     *   Example `docker-compose.yml`:
         ```yaml
@@ -39,6 +40,9 @@ This document outlines the step-by-step implementation plan for the Customer & M
         ```
     *   Create a `.env` file based on `.env.example` (which you'll create later) to store database credentials and update your Prisma schema's `datasource db { ... }` block to use these environment variables.
     *   Run `docker-compose up -d` to start the PostgreSQL container.
+
+4. CI / CD
+    *   Set up GitHub Actions for CI (e.g., linting, testing, building on push/PR).
 
 ## Phase 2: Database Schema & Backend API
 
@@ -163,9 +167,6 @@ This document outlines the step-by-step implementation plan for the Customer & M
 ## Phase 5: Bonus & Submission
 
 18. **Bonus Features (If Time Permits)**:
-    *   Dockerize the Next.js application (`Dockerfile`).
-    *   Update `docker-compose.yml` to include the Next.js app service.
-    *   Set up GitHub Actions for CI (e.g., linting, testing, building on push/PR).
     *   Implement search/filtering for customers and matters.
     *   Improve UI/UX.
 
