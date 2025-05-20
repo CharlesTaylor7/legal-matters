@@ -12,7 +12,6 @@ This document outlines the step-by-step implementation plan for the Customer & M
         *   Tailwind CSS
         *   Prisma
         *   NextAuth.js (for authentication, can be configured for JWT)
-        *   tRPC (optional, but `create-t3-app` includes it. You can still create standard Next.js API routes as per instructions).
     *   This will set up a basic Next.js application with TypeScript, Tailwind, and Prisma configured.
 
 2.  **Configure ESLint & Prettier**:
@@ -172,18 +171,5 @@ This document outlines the step-by-step implementation plan for the Customer & M
 
 19. **Prepare for Submission**:
     *   Ensure all code is committed to a GitHub repository.
-    *   Double-check all requirements from [instructions.md](cci:7://file:///Users/chuck/repos/take-home/legal-matters/instructions.md:0:0-0:0).
+    *   Double-check all requirements from [instructions.md](instructions.md).
     *   Write a note on what was completed and what could be improved if you ran out of time.
-
-## Tech Stack & Key Decisions:
-
-*   **Framework**: Next.js (React) with TypeScript
-*   **Styling**: TailwindCSS
-*   **Database**: PostgreSQL
-*   **ORM**: Prisma
-*   **Authentication**: JWT stored in http-only cookies.
-*   **API**: Next.js API Routes (RESTful)
-*   **Development Environment**: Docker for PostgreSQL
-*   **Initial Setup**: `create-t3-app`
-
-This plan should provide a clear roadmap. Remember to commit your changes frequently and test each part as you build it.

@@ -10,8 +10,7 @@ jest for unit tests
 eslint 
 prettier 
 
-
 # implementation decisions
 - Use JWT for authentication, stored in secure http-only cookies
 - RESTful APIS. (We cannot use tRPC or GraphQL)
-
+- We need api docs. Hopefully auto generated
