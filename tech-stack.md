@@ -13,4 +13,5 @@ prettier
 
 # implementation decisions
 - Use JWT for authentication, stored in secure http-only cookies
+- RESTful APIS. (We cannot use tRPC or GraphQL)
 
