@@ -36,7 +36,7 @@ public class CustomerController : ControllerBase
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        
+
         // Admins can see all customers, lawyers can only see their own customers
         var customers = isAdmin
             ? await _context.Customers.ToListAsync()
@@ -53,33 +53,27 @@ public class CustomerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCustomer([FromBody] CustomerCreateRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return Unauthorized(new { message = "Not authenticated" });
         }
-
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var customer = new Customer
         {
             Name = request.Name,
             Phone = request.Phone,
             LawyerId = user.Id,
-            Lawyer = user
+            Lawyer = user,
         };
 
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(
-            nameof(GetCustomer),
-            new { customerId = customer.Id },
-            customer
-        );
+        return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.Id }, customer);
     }
 
     /// <summary>
@@ -97,9 +91,9 @@ public class CustomerController : ControllerBase
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        
-        var customer = await _context.Customers
-            .Include(c => c.Matters)
+
+        var customer = await _context
+            .Customers.Include(c => c.Matters)
             .FirstOrDefaultAsync(c => c.Id == customerId);
 
         if (customer == null)
@@ -128,19 +122,19 @@ public class CustomerController : ControllerBase
         [FromBody] CustomerUpdateRequest request
     )
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return Unauthorized(new { message = "Not authenticated" });
         }
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        
+
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
@@ -177,7 +171,7 @@ public class CustomerController : ControllerBase
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        
+
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
