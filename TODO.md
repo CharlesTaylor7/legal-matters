@@ -9,7 +9,7 @@
 
 ## General
 - [x] Init Backend
-- [ ] Setup database schema
+- [x] Setup database schema
 - [ ] authentication api routes
 - [ ] Doublecheck swagger docs
 - [ ] Implement customer API routes as authenticated routes
