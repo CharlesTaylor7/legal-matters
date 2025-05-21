@@ -25,8 +25,7 @@
   - [x] render into app page
   - [x] ensure all pages load the api/auth/me route to check logged in status
   - [x] highlight active page
-  - [ ] USe Activeclassname menu-active
-  - [ ] links and hovers and overlapping and shifting is unsightly
+  - [x] USe Activeclassname menu-active
   - [x] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
   
 

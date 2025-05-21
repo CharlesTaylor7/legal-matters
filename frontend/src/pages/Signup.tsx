@@ -1,62 +1,27 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router";
+import { useSignupMutation } from "../api";
 
-interface SignupCredentials {
-  email: string;
-  password: string;
-  firmName: string;
-}
 
-interface SignupResponse {
-  id: string;
-  email: string;
-  firmName: string;
-  token?: string; // Might be returned if using JWT
-}
 
-const Signup = () => {
+export default function Signup() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firmName, setFirmName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [redirectToHome, setRedirectToHome] = useState(false);
 
-  const queryClient = useQueryClient();
-
-  // Signup mutation
-  const signupMutation = useMutation<SignupResponse, Error, SignupCredentials>({
-    mutationFn: async (credentials) => {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Important for cookie-based auth
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Signup failed");
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      // Invalidate and refetch auth query to update UI
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-
-      // Set user data in query cache to avoid an extra network request
-      queryClient.setQueryData(["auth", "me"], data);
-
-      // Redirect to home page after successful signup
-      setRedirectToHome(true);
-    },
-    onError: (error) => {
-      setErrorMessage(error.message || "Signup failed. Please try again.");
-    },
-  });
+  // Use the signup mutation hook
+  const signupMutation = useSignupMutation();
+  
+  // Set up side effects for the mutation
+  signupMutation.onSuccess = () => {
+    navigate("/");
+  };
+  
+  signupMutation.onError = (error) => {
+    setErrorMessage(error.message || "Signup failed. Please try again.");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,10 +29,7 @@ const Signup = () => {
     signupMutation.mutate({ email, password, firmName });
   };
 
-  // Redirect after successful signup
-  if (redirectToHome) {
-    return <Navigate to="/" />;
-  }
+
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -165,5 +127,3 @@ const Signup = () => {
     </div>
   );
 };
-
-export default Signup;

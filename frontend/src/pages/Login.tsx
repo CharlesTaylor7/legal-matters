@@ -1,60 +1,26 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router";
+import { useLoginMutation } from "../api";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
 
-interface LoginResponse {
-  id: string;
-  email: string;
-  firmName: string;
-  token?: string; // Might be returned if using JWT
-}
 
-const Login = () => {
+export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [redirectToHome, setRedirectToHome] = useState(false);
 
-  const queryClient = useQueryClient();
-
-  // Login mutation
-  const loginMutation = useMutation<LoginResponse, Error, LoginCredentials>({
-    mutationFn: async (credentials) => {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Important for cookie-based auth
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      // Invalidate and refetch auth query to update UI
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-
-      // Set user data in query cache to avoid an extra network request
-      queryClient.setQueryData(["auth", "me"], data);
-
-      // Redirect to home page after successful login
-      setRedirectToHome(true);
-    },
-    onError: (error) => {
-      setErrorMessage(error.message || "Login failed. Please try again.");
-    },
-  });
+  // Use the login mutation hook
+  const loginMutation = useLoginMutation();
+  
+  // Set up side effects for the mutation
+  loginMutation.onSuccess = () => {
+    navigate("/");
+  };
+  
+  loginMutation.onError = (error) => {
+    setErrorMessage(error.message || "Login failed. Please try again.");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,10 +28,7 @@ const Login = () => {
     loginMutation.mutate({ email, password });
   };
 
-  // Redirect after successful login
-  if (redirectToHome) {
-    return <Navigate to="/" />;
-  }
+
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -154,5 +117,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;
