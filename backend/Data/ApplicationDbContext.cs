@@ -1,55 +1,77 @@
 using Microsoft.EntityFrameworkCore;
-using TaxCalculator.Models;
+using LegalMatters.Models;
 
-namespace TaxCalculator.Data;
+namespace LegalMatters.Data;
 
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
-    public DbSet<TaxBand> TaxBands { get; init; }
-    public DbSet<TaxRuleSet> TaxRuleSets { get; init; }
+    public DbSet<Customer> Customers { get; init; }
+    public DbSet<Matter> Matters { get; init; }
+    public DbSet<User> Users { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // set relations
-        modelBuilder.Entity<TaxRuleSet>().HasMany(t => t.TaxBands);
+        // Configure relationships
+        modelBuilder.Entity<Customer>()
+            .HasMany(c => c.Matters)
+            .WithOne(m => m.Customer)
+            .HasForeignKey(m => m.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<TaxBand>().HasOne(t => t.TaxRuleSet);
+        // Configure indexes
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
 
-        // Seed default tax bands
-        modelBuilder.Entity<TaxRuleSet>().HasData(new TaxRuleSet { Id = 1, Name = "Default" });
+        // Seed demo data
+        modelBuilder.Entity<Customer>().HasData(
+            new Customer
+            {
+                Id = 1,
+                Name = "Acme Corporation",
+                Phone = "555-123-4567"
+            },
+            new Customer
+            {
+                Id = 2,
+                Name = "Globex Industries",
+                Phone = "555-987-6543"
+            }
+        );
 
-        modelBuilder
-            .Entity<TaxBand>()
-            .HasData(
-                new TaxBand
-                {
-                    TaxRuleSetId = 1,
-                    Id = 1,
-                    Name = "A",
-                    LowerLimit = 0,
-                    PercentageRate = 0,
-                },
-                new TaxBand
-                {
-                    TaxRuleSetId = 1,
-                    Id = 2,
-                    Name = "B",
-                    LowerLimit = 5000,
-                    PercentageRate = 20,
-                },
-                new TaxBand
-                {
-                    TaxRuleSetId = 1,
-                    Id = 3,
-                    Name = "C",
-                    LowerLimit = 20000,
-                    PercentageRate = 40,
-                }
-            );
+        modelBuilder.Entity<Matter>().HasData(
+            new Matter
+            {
+                Id = 1,
+                CustomerId = 1,
+                Title = "Corporate Restructuring",
+                Description = "Assistance with corporate restructuring and legal compliance",
+                OpenDate = new DateTime(2025, 1, 15),
+                Status = MatterStatus.Open
+            },
+            new Matter
+            {
+                Id = 2,
+                CustomerId = 1,
+                Title = "Contract Review",
+                Description = "Review of vendor contracts",
+                OpenDate = new DateTime(2025, 2, 10),
+                Status = MatterStatus.Open
+            },
+            new Matter
+            {
+                Id = 3,
+                CustomerId = 2,
+                Title = "Patent Application",
+                Description = "Filing patent for new technology",
+                OpenDate = new DateTime(2025, 3, 5),
+                Status = MatterStatus.OnHold
+            }
+        );
     }
 }

@@ -4,8 +4,8 @@
 - [x] Decomission vercel
 - [x] setup fly.io
 - [x] get .env working with server + ef + docker
-- [ ] CI/CD for github actions to deploy
-- [ ] Get local docker setup working
+- [x] CI/CD for github actions to deploy
+- [x] Get local docker setup working
 
 ## General
 - [x] Init Backend

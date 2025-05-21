@@ -1,11 +1,9 @@
 using System.Reflection;
 using dotenv.net;
+using LegalMatters.Data;
+// using LegalMatters.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using TaxCalculator.Data;
-using TaxCalculator.Repositories;
-using TaxCalculator.Services;
-
 
 WebApplicationBuilder Configure()
 {
@@ -13,22 +11,26 @@ WebApplicationBuilder Configure()
 
     // for development only, we load the .env file
     // production secrets are set via fly secrets cli
-    if (builder.Environment.IsDevelopment()) {
-        DotEnv.Load(options: new DotEnvOptions(envFilePaths: [ "../.env"]));
+    if (builder.Environment.IsDevelopment())
+    {
+        DotEnv.Load(options: new DotEnvOptions(envFilePaths: ["../.env"]));
     }
 
     // Add services to the container
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
 
-    // Configure CORS
-    builder.Services.AddCors(options =>
+    if (builder.Environment.IsDevelopment())
     {
-        options.AddDefaultPolicy(policy =>
+        // Configure CORS
+        builder.Services.AddCors(options =>
         {
-            policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+            });
         });
-    });
+    }
 
     // Configure Swagger
     builder.Services.AddSwaggerGen(options =>
@@ -60,10 +62,8 @@ WebApplicationBuilder Configure()
     );
 
     // Register repositories
-    builder.Services.AddScoped<ITaxRulesRepository, TaxRulesRepository>();
 
     // Register application services
-    builder.Services.AddScoped<TaxCalculationService>();
 
     // Add health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
