@@ -17,13 +17,21 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure relationships
+        // Configure Customer-Matter relationship
         modelBuilder
             .Entity<Customer>()
             .HasMany(c => c.Matters)
             .WithOne(m => m.Customer)
             .HasForeignKey(m => m.CustomerId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Lawyer-Customer relationship
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.Customers)
+            .WithOne(c => c.Lawyer)
+            .HasForeignKey(c => c.LawyerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Configure indexes
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,4 +15,5 @@ public class User : IdentityUser<int>
     public required string FirmName { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public List<Customer>? Customers { get; set; }
 }
