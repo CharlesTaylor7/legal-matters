@@ -20,16 +20,22 @@
 ## Frontend
 - [x] Init frontend - vite
 - [x] Home page greets the user
-- [ ] Set favicon to the justice scales emoji
-- [ ] Navbar
+- [x] Set favicon to the justice scales emoji
+- [x] Navbar
   - [x] render into app page
   - [x] ensure all pages load the api/auth/me route to check logged in status
-  - highlight active page
+  - [x] highlight active page
+  - [ ] links and hovers and overlapping and shifting is unsightly
+  - [ ] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
+  - [ ] Confirmation on the logout button?
+  
 
 - [x] Build Login UI
+  - [ ] Input box highlight overlaps label text. Removed focused style?
+
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
-- [ ] Eslint + prettier
+- [x] Eslint + prettier
 
 
 

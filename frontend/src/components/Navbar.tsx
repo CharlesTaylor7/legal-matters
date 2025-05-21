@@ -56,22 +56,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md flex flex-col md:flex-row py-2">
-      {/* Title centered at the top */}
-      <div className="w-full flex justify-center mb-2 md:mb-0 md:w-auto md:justify-start">
-        <Link 
-          to="/" 
-          className={`btn btn-ghost text-xl ${location.pathname === "/" ? "text-primary" : ""}`}
-        >
-          Legal Matters
-        </Link>
-      </div>
-
-      {/* Navigation links left-aligned */}
-      <div className="w-full flex justify-start">
-        {/* Mobile menu - Only shown when user is logged in */}
-        {user && (
-          <div className="dropdown md:hidden">
+    <div className="navbar bg-base-100 shadow-md py-2">
+      {/* Mobile hamburger menu - Only shown when user is logged in */}
+      {user && (
+        <div className="navbar-start md:hidden">
+          <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -108,13 +97,38 @@ const Navbar = () => {
                   Matters
                 </Link>
               </li>
+              <li className="mt-2 border-t pt-2">
+                <button
+                  onClick={handleLogout}
+                  className="text-error"
+                  disabled={logoutMutation.isPending}
+                >
+                  {logoutMutation.isPending ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Logout"
+                  )}
+                </button>
+              </li>
             </ul>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Desktop menu - Only shown when user is logged in */}
-        {user && (
-          <ul className="menu menu-horizontal px-1 hidden md:flex">
+      {/* Title centered on mobile, left-aligned on desktop */}
+      <div className={`${user ? "navbar-center md:navbar-start" : "navbar-start"} flex-1`}>
+        <Link 
+          to="/" 
+          className={`btn btn-ghost text-xl ${location.pathname === "/" ? "text-primary" : ""}`}
+        >
+          Legal Matters
+        </Link>
+      </div>
+
+      {/* Desktop menu - Only shown when user is logged in */}
+      {user && (
+        <div className="navbar-center hidden md:flex">
+          <ul className="menu menu-horizontal px-1">
             <li>
               <Link 
                 to="/customers" 
@@ -132,26 +146,26 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
-        )}
-
-        {/* Auth buttons */}
-        <div className="ml-auto">
-          {isLoading ? (
-            <span className="loading loading-spinner loading-sm"></span>
-          ) : user ? (
-            <button
-              onClick={handleLogout}
-              className="btn btn-ghost"
-              disabled={logoutMutation.isPending}
-            >
-              {logoutMutation.isPending ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                "Logout"
-              )}
-            </button>
-          ) : null}
         </div>
+      )}
+
+      {/* Auth buttons - Only shown on desktop when logged in */}
+      <div className="navbar-end">
+        {isLoading ? (
+          <span className="loading loading-spinner loading-sm"></span>
+        ) : user ? (
+          <button
+            onClick={handleLogout}
+            className="btn btn-ghost hidden md:flex"
+            disabled={logoutMutation.isPending}
+          >
+            {logoutMutation.isPending ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              "Logout"
+            )}
+          </button>
+        ) : null}
       </div>
     </div>
   );
