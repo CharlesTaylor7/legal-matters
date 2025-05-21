@@ -207,6 +207,114 @@ public class MattersController : ControllerBase
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// Update an existing matter
+    /// </summary>
+    /// <param name="customerId">ID of the customer</param>
+    /// <param name="matterId">ID of the matter to update</param>
+    /// <param name="request">Matter update request</param>
+    /// <returns>Updated matter</returns>
+    [HttpPut("{matterId}")]
+    [ProducesResponseType(typeof(MatterResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MatterResponse>> UpdateMatter(
+        int customerId,
+        int matterId,
+        [FromBody] MatterUpdateRequest request
+    )
+    {
+        // Validate permissions first
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(new ErrorResponse { Message = "Not authenticated" });
+        }
+
+        // Check if customer exists
+        var customer = await _context.Customers.FindAsync(customerId);
+        if (customer == null)
+        {
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
+        }
+
+        // Check if matter exists and belongs to the customer
+        var matter = await _context.Matters.FirstOrDefaultAsync(m =>
+            m.Id == matterId && m.CustomerId == customerId
+        );
+        if (matter == null)
+        {
+            return NotFound(new ErrorResponse { Message = "Matter not found" });
+        }
+
+        // Check authorization - Admins can access all, lawyers only their customers
+        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+        if (!isAdmin && customer.LawyerId != user.Id)
+        {
+            return Forbid();
+        }
+
+        // Now validate the model
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        // Update the matter
+        matter.Title = request.Title;
+        matter.Description = request.Description;
+        matter.Status = request.Status;
+        matter.OpenDate = request.OpenDate ?? matter.OpenDate;
+
+        // If status is changed to Closed, set CloseDate if not already set
+        if (matter.Status == MatterStatus.Closed && matter.CloseDate == null)
+        {
+            matter.CloseDate = DateTime.UtcNow;
+        }
+        // If status is changed from Closed, clear CloseDate
+        else if (matter.Status != MatterStatus.Closed)
+        {
+            matter.CloseDate = null;
+        }
+
+        _context.Entry(matter).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MatterExists(matterId))
+            {
+                return NotFound(new ErrorResponse { Message = "Matter not found" });
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        var response = new MatterResponse
+        {
+            Id = matter.Id,
+            Title = matter.Title,
+            Description = matter.Description,
+            OpenDate = matter.OpenDate,
+            Status = matter.Status,
+            CustomerId = matter.CustomerId,
+        };
+
+        return Ok(response);
+    }
+
+    private bool MatterExists(int id)
+    {
+        return _context.Matters.Any(e => e.Id == id);
+    }
 }
 
 public record MatterCreateRequest
@@ -221,6 +329,21 @@ public record MatterCreateRequest
     public DateTime? OpenDate { get; set; }
 
     public MatterStatus? Status { get; set; }
+}
+
+public record MatterUpdateRequest
+{
+    [Required]
+    [StringLength(100)]
+    public required string Title { get; set; }
+
+    [StringLength(500)]
+    public string? Description { get; set; }
+
+    public DateTime? OpenDate { get; set; }
+
+    [Required]
+    public required MatterStatus Status { get; set; }
 }
 
 public record MatterResponse

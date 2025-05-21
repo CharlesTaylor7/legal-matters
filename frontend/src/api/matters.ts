@@ -52,12 +52,22 @@ export interface MatterCreateRequest {
 }
 
 /**
+ * Interface for updating an existing matter
+ */
+export interface MatterUpdateRequest {
+  title: string;
+  description?: string;
+  openDate?: string; // Optional ISO date string
+  status: MatterStatus; // Required status
+}
+
+/**
  * Custom hook to fetch matters for a customer
  * @param customerId ID of the customer
  * @returns UseQueryResult with the matters data
  */
 export const useMattersQuery = (
-  customerId: number
+  customerId: number,
 ): UseQueryResult<MatterResponse[], Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters"],
@@ -85,13 +95,13 @@ export const useMattersQuery = (
  */
 export const useMatterQuery = (
   customerId: number,
-  matterId: number
+  matterId: number,
 ): UseQueryResult<MatterDetailResponse, Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters", matterId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/customers/${customerId}/matters/${matterId}`
+        `/api/customers/${customerId}/matters/${matterId}`,
       );
 
       if (!response.ok) {
@@ -146,6 +156,63 @@ export const useCreateMatterMutation = (): UseMutationResult<
     },
     onSuccess: (data, { customerId }) => {
       // Invalidate matters query to refetch the list
+      queryClient.invalidateQueries({
+        queryKey: ["customers", customerId, "matters"],
+      });
+      // Invalidate customer detail to update the matters list there
+      queryClient.invalidateQueries({ queryKey: ["customers", customerId] });
+    },
+  });
+};
+
+/**
+ * Custom hook to update an existing matter
+ * @returns UseMutationResult for updating a matter
+ */
+export const useUpdateMatterMutation = (): UseMutationResult<
+  MatterResponse,
+  Error,
+  { customerId: number; matterId: number; data: MatterUpdateRequest },
+  unknown
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      customerId,
+      matterId,
+      data,
+    }: {
+      customerId: number;
+      matterId: number;
+      data: MatterUpdateRequest;
+    }) => {
+      const response = await fetch(
+        `/api/customers/${customerId}/matters/${matterId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
+        throw new Error(errorData.message || "Failed to update matter");
+      }
+
+      return response.json() as Promise<MatterResponse>;
+    },
+    onSuccess: (data, { customerId, matterId }) => {
+      // Invalidate specific matter query
+      queryClient.invalidateQueries({
+        queryKey: ["customers", customerId, "matters", matterId],
+      });
+      // Invalidate matters list query
       queryClient.invalidateQueries({
         queryKey: ["customers", customerId, "matters"],
       });
