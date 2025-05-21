@@ -1,19 +1,25 @@
-# General
-- [x] get local docker setup working
+# Backend
+## Infra / ops
 - [x] setup neon
-- [x] setup vercel
-- [x] research api doc generation
-- [x] Figure out if nextauth is overkill
-- [x] setup prisma schema
-- [x] Setup swagger doc gen
-- [ ] Try zod + next
-  js swagger doc won't stay in sync with my types
-- [ ] Check auth and ownership on all routes
+- [ ] setup fly.io
+- [ ] CI/CD for github actions to deploy
+- [ ] Get local docker setup working
+
+## General
+- [x] Init Backend
+- [ ] Setup database schema
+- [ ] authentication api routes
+- [ ] Doublecheck swagger docs
+- [ ] Implement customer API routes as authenticated routes
+- [ ] Implement matter API routes as authenticated routes
+- [ ] QA whole thing with swagger ui
 
 
 
-
-# Issues
-- re-enable no-unsafe-type-assertions eslint rule
-
+## Frontend
+- [ ] Init frontend - vite
+  - [ ] Eslint + prettier
+- [ ] Build Login UI
+- [ ] Build Customers UI
+- [ ] Build Matters  UI
 
