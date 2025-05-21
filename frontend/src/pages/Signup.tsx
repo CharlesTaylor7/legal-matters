@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { useSignupMutation } from "../api";
-
-
+import { useSignupMutation } from "../api/auth";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -13,12 +11,12 @@ export default function Signup() {
 
   // Use the signup mutation hook
   const signupMutation = useSignupMutation();
-  
+
   // Set up side effects for the mutation
   signupMutation.onSuccess = () => {
     navigate("/");
   };
-  
+
   signupMutation.onError = (error) => {
     setErrorMessage(error.message || "Signup failed. Please try again.");
   };
@@ -28,8 +26,6 @@ export default function Signup() {
     setErrorMessage(""); // Clear any previous errors
     signupMutation.mutate({ email, password, firmName });
   };
-
-
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -126,4 +122,4 @@ export default function Signup() {
       </div>
     </div>
   );
-};
+}

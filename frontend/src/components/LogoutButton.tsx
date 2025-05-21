@@ -1,4 +1,4 @@
-import { useLogoutMutation } from "../api";
+import { useLogoutMutation } from "../api/auth";
 
 export default function LogoutButton() {
   const logoutMutation = useLogoutMutation();

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { useLoginMutation } from "../api";
-
-
+import { useLoginMutation } from "../api/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,12 +10,12 @@ export default function Login() {
 
   // Use the login mutation hook
   const loginMutation = useLoginMutation();
-  
+
   // Set up side effects for the mutation
   loginMutation.onSuccess = () => {
     navigate("/");
   };
-  
+
   loginMutation.onError = (error) => {
     setErrorMessage(error.message || "Login failed. Please try again.");
   };
@@ -27,8 +25,6 @@ export default function Login() {
     setErrorMessage(""); // Clear any previous errors
     loginMutation.mutate({ email, password });
   };
-
-
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -116,4 +112,4 @@ export default function Login() {
       </div>
     </div>
   );
-};
+}

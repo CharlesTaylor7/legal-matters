@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { useAuthQuery } from "../api";
+import { useAuthQuery } from "../api/auth";
 import LogoutButton from "./LogoutButton";
 
 export default function Navbar() {
