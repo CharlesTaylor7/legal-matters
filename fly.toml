@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'uk-tax-app'
+app = 'legal-matters'
 primary_region = 'atl'
 
 [build]
@@ -23,4 +23,3 @@ cpus = 1
 
 [deploy]
 release_command = "/app/efbundle"
-

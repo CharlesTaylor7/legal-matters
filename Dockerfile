@@ -10,18 +10,18 @@ RUN npm ci
 COPY frontend/ ./
 
 # Build the frontend
-RUN npm run build -- --configuration production
+RUN npm run build
 
 ### BACKEND BUILD ###
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS backend-build
 WORKDIR /app/backend
 
 # Copy csproj & tool manifest first for better caching
-COPY backend/TaxCalculator/TaxCalculator.csproj backend/.config ./
+COPY backend/LegalMatters.csproj backend/.config ./
 RUN dotnet restore && dotnet tool restore
 
 # Copy the rest of the backend code
-COPY backend/TaxCalculator/* ./
+COPY backend/* ./
 
 RUN dotnet publish -c Release -o out
 RUN dotnet ef migrations bundle
@@ -38,7 +38,7 @@ COPY --from=backend-build /app/backend/out ./
 COPY --from=backend-build /app/backend/efbundle ./
 
 # Copy frontend build artifacts to wwwroot
-COPY --from=frontend-build /app/frontend/dist/tax-calculator/browser ./wwwroot
+# COPY --from=frontend-build /app/frontend/dist/tax-calculator/browser ./wwwroot
 
 # Expose ports
 EXPOSE 8080
@@ -48,4 +48,4 @@ ENV ASPNETCORE_URLS="http://0.0.0.0:8080"
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Start the application
-CMD ["dotnet", "TaxCalculator.dll"]
+CMD ["dotnet", "LegalMatters.dll"]
