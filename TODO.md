@@ -3,7 +3,7 @@
 - [x] setup neon
 - [x] Decomission vercel
 - [x] setup fly.io
-- [ ] get .env working with server + ef + docker
+- [x] get .env working with server + ef + docker
 - [ ] CI/CD for github actions to deploy
 - [ ] Get local docker setup working
 
