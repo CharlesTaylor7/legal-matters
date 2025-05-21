@@ -13,6 +13,7 @@
 - [x] Doublecheck swagger docs
 - [x] Implement customer API routes as authenticated routes
 - [x] Implement matter API routes as authenticated routes
+- [ ] Dedicated response objects for each controller route
 - [ ] QA whole thing with swagger ui
     - playwright maybe?
 

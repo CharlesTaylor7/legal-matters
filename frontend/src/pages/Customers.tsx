@@ -2,17 +2,21 @@ import { useState } from "react";
 import {
   useCustomersQuery,
   useCreateCustomerMutation,
+  useUpdateCustomerMutation,
   useDeleteCustomerMutation,
   type Customer,
   type CustomerInput,
 } from "../api/customers";
 
 export default function Customers() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCustomer, setNewCustomer] = useState<CustomerInput>({
     name: "",
     phone: "",
   });
+  
+  // State for editing and viewing a customer
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [viewingCustomer, setViewingCustomer] = useState<Customer | null>(null);
 
   // Fetch customers using the custom hook
   const {
@@ -22,8 +26,9 @@ export default function Customers() {
     error,
   } = useCustomersQuery();
 
-  // Mutations for creating and deleting customers
+  // Mutations for creating, updating, and deleting customers
   const createCustomerMutation = useCreateCustomerMutation();
+  const updateCustomerMutation = useUpdateCustomerMutation();
   const deleteCustomerMutation = useDeleteCustomerMutation();
 
   // Handle form submission for creating a new customer
@@ -32,9 +37,46 @@ export default function Customers() {
     createCustomerMutation.mutate(newCustomer, {
       onSuccess: () => {
         setNewCustomer({ name: "", phone: "" });
-        setIsModalOpen(false);
+        // Close the modal using the HTML dialog element's close method
+        const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+        if (modal) modal.close();
       },
     });
+  };
+  
+  // Handle form submission for updating a customer
+  const handleUpdateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCustomer) return;
+    
+    updateCustomerMutation.mutate({
+      id: editingCustomer.id,
+      data: {
+        name: editingCustomer.name,
+        phone: editingCustomer.phone
+      }
+    }, {
+      onSuccess: () => {
+        setEditingCustomer(null);
+        // Close the modal using the HTML dialog element's close method
+        const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
+        if (modal) modal.close();
+      },
+    });
+  };
+  
+  // Open the edit modal for a customer
+  const handleEdit = (customer: Customer) => {
+    setEditingCustomer(customer);
+    const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
+    if (modal) modal.showModal();
+  };
+  
+  // Open the view modal for a customer
+  const handleView = (customer: Customer) => {
+    setViewingCustomer(customer);
+    const modal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+    if (modal) modal.showModal();
   };
 
   // Handle customer deletion
@@ -50,7 +92,10 @@ export default function Customers() {
         <h1 className="text-2xl font-bold">Customers</h1>
         <button
           className="btn btn-primary"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+            if (modal) modal.showModal();
+          }}
         >
           Add Customer
         </button>
@@ -90,8 +135,18 @@ export default function Customers() {
                   <td>{customer.name}</td>
                   <td>{customer.phone}</td>
                   <td className="flex gap-2">
-                    <button className="btn btn-sm btn-ghost">View</button>
-                    <button className="btn btn-sm btn-ghost">Edit</button>
+                    <button 
+                      className="btn btn-sm btn-ghost"
+                      onClick={() => handleView(customer)}
+                    >
+                      View
+                    </button>
+                    <button 
+                      className="btn btn-sm btn-ghost"
+                      onClick={() => handleEdit(customer)}
+                    >
+                      Edit
+                    </button>
                     <button
                       className="btn btn-sm btn-error"
                       onClick={() => handleDelete(customer.id)}
@@ -107,13 +162,77 @@ export default function Customers() {
         </div>
       )}
 
-      {/* Modal for adding a new customer */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add New Customer</h2>
+      {/* DaisyUI Modal for adding a new customer */}
+      <dialog id="add_customer_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Add New Customer</h3>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Customer Name</span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered"
+                value={newCustomer.name}
+                onChange={(e) =>
+                  setNewCustomer({ ...newCustomer, name: e.target.value })
+                }
+                required
+              />
+            </div>
 
-            <form onSubmit={handleSubmit}>
+            <div className="form-control mb-6">
+              <label className="label">
+                <span className="label-text">Phone Number</span>
+              </label>
+              <input
+                type="tel"
+                className="input input-bordered"
+                value={newCustomer.phone}
+                onChange={(e) =>
+                  setNewCustomer({ ...newCustomer, phone: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+                  if (modal) modal.close();
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={createCustomerMutation.isPending}
+              >
+                {createCustomerMutation.isPending
+                  ? "Saving..."
+                  : "Save Customer"}
+              </button>
+            </div>
+          </form>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+      
+      {/* DaisyUI Modal for editing a customer */}
+      <dialog id="edit_customer_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Edit Customer</h3>
+          
+          {editingCustomer && (
+            <form onSubmit={handleUpdateSubmit}>
               <div className="form-control mb-4">
                 <label className="label">
                   <span className="label-text">Customer Name</span>
@@ -121,9 +240,12 @@ export default function Customers() {
                 <input
                   type="text"
                   className="input input-bordered"
-                  value={newCustomer.name}
+                  value={editingCustomer.name}
                   onChange={(e) =>
-                    setNewCustomer({ ...newCustomer, name: e.target.value })
+                    setEditingCustomer({ 
+                      ...editingCustomer, 
+                      name: e.target.value 
+                    })
                   }
                   required
                 />
@@ -136,36 +258,103 @@ export default function Customers() {
                 <input
                   type="tel"
                   className="input input-bordered"
-                  value={newCustomer.phone}
+                  value={editingCustomer.phone}
                   onChange={(e) =>
-                    setNewCustomer({ ...newCustomer, phone: e.target.value })
+                    setEditingCustomer({ 
+                      ...editingCustomer, 
+                      phone: e.target.value 
+                    })
                   }
                   required
                 />
               </div>
 
-              <div className="flex justify-end gap-2">
+              <div className="modal-action">
                 <button
                   type="button"
                   className="btn btn-ghost"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setEditingCustomer(null);
+                    const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
+                    if (modal) modal.close();
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={createCustomerMutation.isPending}
+                  disabled={updateCustomerMutation.isPending}
                 >
-                  {createCustomerMutation.isPending
-                    ? "Saving..."
-                    : "Save Customer"}
+                  {updateCustomerMutation.isPending
+                    ? "Updating..."
+                    : "Update Customer"}
                 </button>
               </div>
             </form>
-          </div>
+          )}
         </div>
-      )}
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+      
+      {/* DaisyUI Modal for viewing a customer */}
+      <dialog id="view_customer_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Customer Details</h3>
+          
+          {viewingCustomer && (
+            <div>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <h4 className="font-semibold text-sm opacity-75">Customer ID</h4>
+                  <p>{viewingCustomer.id}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm opacity-75">Name</h4>
+                  <p>{viewingCustomer.name}</p>
+                </div>
+                <div className="col-span-2">
+                  <h4 className="font-semibold text-sm opacity-75">Phone</h4>
+                  <p>{viewingCustomer.phone}</p>
+                </div>
+              </div>
+              
+              <div className="modal-action">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setViewingCustomer(null);
+                    const modal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+                    if (modal) modal.close();
+                  }}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    // Close view modal
+                    const viewModal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+                    if (viewModal) viewModal.close();
+                    
+                    // Open edit modal with the same customer
+                    handleEdit(viewingCustomer);
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }
