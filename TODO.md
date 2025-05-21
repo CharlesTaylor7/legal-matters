@@ -16,8 +16,6 @@
 - [x] Dedicated response objects for each controller route
   - we have to do this because the AI is returning in models in some cases, and swagger is not picking up the docs
 
-- [ ] QA whole thing with swagger ui
-    - playwright maybe?
 
 
 ## Frontend
@@ -31,17 +29,18 @@
   - [x] USe Activeclassname menu-active
   - [x] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
   
-- [x] redo the api files based on the c# controllers.
+
+## Required
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
-- [] review and revise error handling
+- [ ] review and revise client side handling
 
 
 
 ## nice to have
+- [ ] RBAC policies
+- [ ] playwright maybe
 - [ ] Auto populate swagger examples with valid values
-- [ ] Fixup CI/CD
-  - [ ] Confirmation on the logout button?
 - [ ] Matter status should be text not enum, for the sake of swagger docs
 
 

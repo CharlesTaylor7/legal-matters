@@ -17,7 +17,6 @@ services:
       POSTGRES_DB: legal_matters
       
   app:
-    env_file: .env
     build: .
     container_name: legal-matters
     ports:
@@ -34,9 +33,9 @@ services:
         condition: service_completed_successfully
     environment:
       ASPNET_ENVIRONMENT: production
+      NPGSQL_CONNECTION: Host=legal-matters-db;Username=postgres;Password=postgres;Database=legal_matters;Ssl Mode=Disable;"
         
   migrate:
-    env_file: .env
     build: .
     container_name: legal-matters-migrate
     entrypoint: ["/app/efbundle"]
@@ -46,6 +45,7 @@ services:
 
     environment:
       ASPNET_ENVIRONMENT: production
+      NPGSQL_CONNECTION: Host=legal-matters-db;Username=postgres;Password=postgres;Database=legal_matters;Ssl Mode=Disable;"
 
 volumes:
   postgres_data:
