@@ -1,0 +1,6 @@
+We are working on a project call "legal matters".
+I have initialized the project from a different project regarding "uk tax system". We can strip out this unrelated functionality as we go. This was just starter code for the docker configuration and project structure.
+
+We need to rewrite existing functionality to match this project.
+
+
