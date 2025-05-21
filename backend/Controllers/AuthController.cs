@@ -23,15 +23,7 @@ public class AuthController : ControllerBase
     /// Create a new user account
     /// </summary>
     /// <remarks>
-    /// Sample request:
-    ///
-    ///     POST /api/auth/signup
-    ///     {
-    ///        "email": "user@example.com",
-    ///        "password": "password123",
-    ///        "firmName": "Legal Firm LLC"
-    ///     }
-    ///
+    /// Uses Cookie Based Authentication
     /// </remarks>
     /// <param name="request">User signup information</param>
     /// <returns>Success message or error</returns>
@@ -67,15 +59,15 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Login with email and password
     /// </summary>
-    /// <remarks>
-    /// Sample request:
-    ///
+    /// <example>
     ///     POST /api/auth/login
     ///     {
     ///        "email": "user@example.com",
     ///        "password": "password123"
     ///     }
-    ///
+    /// </example>
+    /// <remarks>
+    /// Uses Cookie Based Authentication
     /// </remarks>
     /// <param name="request">Login credentials</param>
     /// <returns>Success message or error</returns>
@@ -129,6 +121,10 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Logout the current user
     /// </summary>
+    ///
+    /// <remarks>
+    /// Resets the browser cookies and clears Database session
+    /// </remarks>
     /// <returns>Success message</returns>
     [HttpPost("logout")]
     [Authorize]
