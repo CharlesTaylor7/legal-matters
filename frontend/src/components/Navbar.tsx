@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
-import { useAuthQuery, useLogoutMutation } from "../api";
+import { useAuthQuery } from "../api";
+import LogoutButton from "./LogoutButton";
 
 export default function Navbar() {
   // Get user data from the query
@@ -35,7 +36,7 @@ export default function Navbar() {
                 <NavLink
                   to="/customers"
                   className={({ isActive }) =>
-                    `cursor-pointer ${isActive ? "menu-active" : ""}`
+                    `menu-item ${isActive ? "menu-active" : ""}`
                   }
                 >
                   Customers
@@ -59,23 +60,5 @@ export default function Navbar() {
         </div>
       )}
     </div>
-  );
-}
-
-function LogoutButton() {
-  const logoutMutation = useLogoutMutation();
-
-  return (
-    <button
-      onClick={() => logoutMutation.mutate()}
-      className="btn btn-ghost hidden md:flex"
-      disabled={logoutMutation.isPending}
-    >
-      {logoutMutation.isPending ? (
-        <span className="loading loading-spinner loading-sm"></span>
-      ) : (
-        "Logout"
-      )}
-    </button>
   );
 }
