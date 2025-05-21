@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { Navigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { ReactNode } from "react";
+import { Navigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
 interface User {
   id: string;
@@ -14,19 +14,19 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { data: user, isLoading } = useQuery({
-    queryKey: ['auth', 'me'],
+    queryKey: ["auth", "me"],
     queryFn: async () => {
-      const response = await fetch('/api/auth/me', {
-        credentials: 'include',
+      const response = await fetch("/api/auth/me", {
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           return null;
         }
-        throw new Error('Failed to fetch user data');
+        throw new Error("Failed to fetch user data");
       }
-      
+
       return response.json() as Promise<User>;
     },
   });

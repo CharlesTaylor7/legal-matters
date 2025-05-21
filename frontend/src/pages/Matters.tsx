@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface Matter {
   id: number;
@@ -10,12 +10,30 @@ interface Matter {
 
 const Matters = () => {
   const [matters, setMatters] = useState<Matter[]>([]);
-  
+
   // This would be replaced with an actual API call
   const mockMatters: Matter[] = [
-    { id: 1, title: 'Contract Review', description: 'Review of service agreement', customerId: 1, customerName: 'Acme Corporation' },
-    { id: 2, title: 'Property Dispute', description: 'Boundary dispute with neighbor', customerId: 2, customerName: 'Johnson & Associates' },
-    { id: 3, title: 'Estate Planning', description: 'Will and trust creation', customerId: 3, customerName: 'Smith Family Trust' }
+    {
+      id: 1,
+      title: "Contract Review",
+      description: "Review of service agreement",
+      customerId: 1,
+      customerName: "Acme Corporation",
+    },
+    {
+      id: 2,
+      title: "Property Dispute",
+      description: "Boundary dispute with neighbor",
+      customerId: 2,
+      customerName: "Johnson & Associates",
+    },
+    {
+      id: 3,
+      title: "Estate Planning",
+      description: "Will and trust creation",
+      customerId: 3,
+      customerName: "Smith Family Trust",
+    },
   ];
 
   // Simulating data fetching on component mount
@@ -29,7 +47,7 @@ const Matters = () => {
         <h1 className="text-2xl font-bold">Matters</h1>
         <button className="btn btn-primary">Add Matter</button>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface Customer {
   id: number;
@@ -8,12 +8,12 @@ interface Customer {
 
 const Customers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  
+
   // This would be replaced with an actual API call
   const mockCustomers: Customer[] = [
-    { id: 1, name: 'Acme Corporation', phone: '555-123-4567' },
-    { id: 2, name: 'Johnson & Associates', phone: '555-987-6543' },
-    { id: 3, name: 'Smith Family Trust', phone: '555-456-7890' }
+    { id: 1, name: "Acme Corporation", phone: "555-123-4567" },
+    { id: 2, name: "Johnson & Associates", phone: "555-987-6543" },
+    { id: 3, name: "Smith Family Trust", phone: "555-456-7890" },
   ];
 
   // Simulating data fetching on component mount
@@ -27,7 +27,7 @@ const Customers = () => {
         <h1 className="text-2xl font-bold">Customers</h1>
         <button className="btn btn-primary">Add Customer</button>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>
