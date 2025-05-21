@@ -13,7 +13,7 @@ export default function Customers() {
     name: "",
     phone: "",
   });
-  
+
   // State for editing and viewing a customer
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [viewingCustomer, setViewingCustomer] = useState<Customer | null>(null);
@@ -38,44 +38,55 @@ export default function Customers() {
       onSuccess: () => {
         setNewCustomer({ name: "", phone: "" });
         // Close the modal using the HTML dialog element's close method
-        const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+        const modal = document.getElementById(
+          "add_customer_modal",
+        ) as HTMLDialogElement;
         if (modal) modal.close();
       },
     });
   };
-  
+
   // Handle form submission for updating a customer
   const handleUpdateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCustomer) return;
-    
-    updateCustomerMutation.mutate({
-      id: editingCustomer.id,
-      data: {
-        name: editingCustomer.name,
-        phone: editingCustomer.phone
-      }
-    }, {
-      onSuccess: () => {
-        setEditingCustomer(null);
-        // Close the modal using the HTML dialog element's close method
-        const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
-        if (modal) modal.close();
+
+    updateCustomerMutation.mutate(
+      {
+        id: editingCustomer.id,
+        data: {
+          name: editingCustomer.name,
+          phone: editingCustomer.phone,
+        },
       },
-    });
+      {
+        onSuccess: () => {
+          setEditingCustomer(null);
+          // Close the modal using the HTML dialog element's close method
+          const modal = document.getElementById(
+            "edit_customer_modal",
+          ) as HTMLDialogElement;
+          if (modal) modal.close();
+        },
+      },
+    );
   };
-  
+
   // Open the edit modal for a customer
   const handleEdit = (customer: Customer) => {
     setEditingCustomer(customer);
-    const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
+    const modal = document.getElementById(
+      "edit_customer_modal",
+    ) as HTMLDialogElement;
     if (modal) modal.showModal();
   };
-  
+
   // Open the view modal for a customer
   const handleView = (customer: Customer) => {
     setViewingCustomer(customer);
-    const modal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+    const modal = document.getElementById(
+      "view_customer_modal",
+    ) as HTMLDialogElement;
     if (modal) modal.showModal();
   };
 
@@ -93,7 +104,9 @@ export default function Customers() {
         <button
           className="btn btn-primary"
           onClick={() => {
-            const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+            const modal = document.getElementById(
+              "add_customer_modal",
+            ) as HTMLDialogElement;
             if (modal) modal.showModal();
           }}
         >
@@ -135,13 +148,13 @@ export default function Customers() {
                   <td>{customer.name}</td>
                   <td>{customer.phone}</td>
                   <td className="flex gap-2">
-                    <button 
+                    <button
                       className="btn btn-sm btn-ghost"
                       onClick={() => handleView(customer)}
                     >
                       View
                     </button>
-                    <button 
+                    <button
                       className="btn btn-sm btn-ghost"
                       onClick={() => handleEdit(customer)}
                     >
@@ -163,10 +176,13 @@ export default function Customers() {
       )}
 
       {/* DaisyUI Modal for adding a new customer */}
-      <dialog id="add_customer_modal" className="modal modal-bottom sm:modal-middle">
+      <dialog
+        id="add_customer_modal"
+        className="modal modal-bottom sm:modal-middle"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Add New Customer</h3>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="form-control mb-4">
               <label className="label">
@@ -203,7 +219,9 @@ export default function Customers() {
                 type="button"
                 className="btn btn-ghost"
                 onClick={() => {
-                  const modal = document.getElementById("add_customer_modal") as HTMLDialogElement;
+                  const modal = document.getElementById(
+                    "add_customer_modal",
+                  ) as HTMLDialogElement;
                   if (modal) modal.close();
                 }}
               >
@@ -225,12 +243,15 @@ export default function Customers() {
           <button>close</button>
         </form>
       </dialog>
-      
+
       {/* DaisyUI Modal for editing a customer */}
-      <dialog id="edit_customer_modal" className="modal modal-bottom sm:modal-middle">
+      <dialog
+        id="edit_customer_modal"
+        className="modal modal-bottom sm:modal-middle"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Edit Customer</h3>
-          
+
           {editingCustomer && (
             <form onSubmit={handleUpdateSubmit}>
               <div className="form-control mb-4">
@@ -242,9 +263,9 @@ export default function Customers() {
                   className="input input-bordered"
                   value={editingCustomer.name}
                   onChange={(e) =>
-                    setEditingCustomer({ 
-                      ...editingCustomer, 
-                      name: e.target.value 
+                    setEditingCustomer({
+                      ...editingCustomer,
+                      name: e.target.value,
                     })
                   }
                   required
@@ -260,9 +281,9 @@ export default function Customers() {
                   className="input input-bordered"
                   value={editingCustomer.phone}
                   onChange={(e) =>
-                    setEditingCustomer({ 
-                      ...editingCustomer, 
-                      phone: e.target.value 
+                    setEditingCustomer({
+                      ...editingCustomer,
+                      phone: e.target.value,
                     })
                   }
                   required
@@ -275,7 +296,9 @@ export default function Customers() {
                   className="btn btn-ghost"
                   onClick={() => {
                     setEditingCustomer(null);
-                    const modal = document.getElementById("edit_customer_modal") as HTMLDialogElement;
+                    const modal = document.getElementById(
+                      "edit_customer_modal",
+                    ) as HTMLDialogElement;
                     if (modal) modal.close();
                   }}
                 >
@@ -298,17 +321,22 @@ export default function Customers() {
           <button>close</button>
         </form>
       </dialog>
-      
+
       {/* DaisyUI Modal for viewing a customer */}
-      <dialog id="view_customer_modal" className="modal modal-bottom sm:modal-middle">
+      <dialog
+        id="view_customer_modal"
+        className="modal modal-bottom sm:modal-middle"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Customer Details</h3>
-          
+
           {viewingCustomer && (
             <div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <h4 className="font-semibold text-sm opacity-75">Customer ID</h4>
+                  <h4 className="font-semibold text-sm opacity-75">
+                    Customer ID
+                  </h4>
                   <p>{viewingCustomer.id}</p>
                 </div>
                 <div>
@@ -320,14 +348,16 @@ export default function Customers() {
                   <p>{viewingCustomer.phone}</p>
                 </div>
               </div>
-              
+
               <div className="modal-action">
                 <button
                   type="button"
                   className="btn btn-ghost"
                   onClick={() => {
                     setViewingCustomer(null);
-                    const modal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+                    const modal = document.getElementById(
+                      "view_customer_modal",
+                    ) as HTMLDialogElement;
                     if (modal) modal.close();
                   }}
                 >
@@ -338,9 +368,11 @@ export default function Customers() {
                   className="btn btn-primary"
                   onClick={() => {
                     // Close view modal
-                    const viewModal = document.getElementById("view_customer_modal") as HTMLDialogElement;
+                    const viewModal = document.getElementById(
+                      "view_customer_modal",
+                    ) as HTMLDialogElement;
                     if (viewModal) viewModal.close();
-                    
+
                     // Open edit modal with the same customer
                     handleEdit(viewingCustomer);
                   }}

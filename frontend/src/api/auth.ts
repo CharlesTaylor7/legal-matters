@@ -38,8 +38,6 @@ export interface SignupRequest {
 // Alias for backward compatibility
 export type SignupCredentials = SignupRequest;
 
-
-
 /**
  * Custom hook to fetch the current authenticated user
  * @returns UseQueryResult with the user data
@@ -87,19 +85,21 @@ export const useLoginMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Login failed");
       }
 
       // Get the success response but we don't need to return it
-      await response.json() as SuccessResponse;
-      
+      (await response.json()) as SuccessResponse;
+
       // Fetch the user data after successful login
       const userResponse = await fetch("/api/auth/me");
       if (!userResponse.ok) {
         throw new Error("Failed to fetch user data after login");
       }
-      
+
       return userResponse.json() as Promise<User>;
     },
     onSuccess: (data) => {
@@ -137,13 +137,15 @@ export const useSignupMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Signup failed");
       }
 
       // Get the success response but we don't need to return it
-      await response.json() as SuccessResponse;
-      
+      (await response.json()) as SuccessResponse;
+
       // Login after successful signup
       const loginResponse = await fetch("/api/auth/login", {
         method: "POST",
@@ -155,17 +157,17 @@ export const useSignupMutation = (): UseMutationResult<
           password: credentials.password,
         }),
       });
-      
+
       if (!loginResponse.ok) {
         throw new Error("Failed to login after signup");
       }
-      
+
       // Fetch the user data after successful login
       const userResponse = await fetch("/api/auth/me");
       if (!userResponse.ok) {
         throw new Error("Failed to fetch user data after signup");
       }
-      
+
       return userResponse.json() as Promise<User>;
     },
     onSuccess: (data) => {
@@ -200,12 +202,14 @@ export const useLogoutMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Logout failed");
       }
-      
+
       // We don't need to return the success response
-      await response.json() as SuccessResponse;
+      (await response.json()) as SuccessResponse;
     },
     onSuccess: () => {
       // Invalidate the auth query to trigger a refetch
@@ -214,5 +218,3 @@ export const useLogoutMutation = (): UseMutationResult<
     },
   });
 };
-
-

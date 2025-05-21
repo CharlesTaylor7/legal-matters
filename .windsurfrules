@@ -25,3 +25,5 @@ export default function FooComponent(props: FooProps) {
 ```
 
 The api is served from the host as the app. Please do not set fetch "credentials": true.
+
+

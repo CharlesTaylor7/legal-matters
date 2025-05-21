@@ -27,7 +27,7 @@ public class Matter
     // Foreign key for Customer
     [Required]
     public int CustomerId { get; set; }
-    
+
     // Navigation property
     [ForeignKey("CustomerId")]
     public Customer? Customer { get; set; }
@@ -37,5 +37,5 @@ public enum MatterStatus
 {
     Open,
     Closed,
-    OnHold
+    OnHold,
 }

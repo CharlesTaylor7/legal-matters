@@ -5,7 +5,7 @@ import {
   type UseMutationResult,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ErrorResponse, SuccessResponse } from "./types";
+import { type ErrorResponse } from "./types";
 
 /**
  * Matter status enum matching the backend MatterStatus enum
@@ -65,7 +65,9 @@ export const useMattersQuery = (
       const response = await fetch(`/api/customers/${customerId}/matters`);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to fetch matters");
       }
 
@@ -88,10 +90,14 @@ export const useMatterQuery = (
   return useQuery({
     queryKey: ["customers", customerId, "matters", matterId],
     queryFn: async () => {
-      const response = await fetch(`/api/customers/${customerId}/matters/${matterId}`);
+      const response = await fetch(
+        `/api/customers/${customerId}/matters/${matterId}`
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to fetch matter");
       }
 
@@ -114,7 +120,13 @@ export const useCreateMatterMutation = (): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ customerId, data }: { customerId: number; data: MatterCreateRequest }) => {
+    mutationFn: async ({
+      customerId,
+      data,
+    }: {
+      customerId: number;
+      data: MatterCreateRequest;
+    }) => {
       const response = await fetch(`/api/customers/${customerId}/matters`, {
         method: "POST",
         headers: {
@@ -124,7 +136,9 @@ export const useCreateMatterMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to create matter");
       }
 
@@ -132,7 +146,9 @@ export const useCreateMatterMutation = (): UseMutationResult<
     },
     onSuccess: (data, { customerId }) => {
       // Invalidate matters query to refetch the list
-      queryClient.invalidateQueries({ queryKey: ["customers", customerId, "matters"] });
+      queryClient.invalidateQueries({
+        queryKey: ["customers", customerId, "matters"],
+      });
       // Invalidate customer detail to update the matters list there
       queryClient.invalidateQueries({ queryKey: ["customers", customerId] });
     },

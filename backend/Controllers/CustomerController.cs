@@ -46,13 +46,15 @@ public class CustomerController : ControllerBase
             ? await _context.Customers.ToListAsync()
             : await _context.Customers.Where(c => c.LawyerId == user.Id).ToListAsync();
 
-        var response = customers.Select(c => new CustomerResponse
-        {
-            Id = c.Id,
-            Name = c.Name,
-            Phone = c.Phone,
-            LawyerId = c.LawyerId
-        }).ToList();
+        var response = customers
+            .Select(c => new CustomerResponse
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Phone = c.Phone,
+                LawyerId = c.LawyerId,
+            })
+            .ToList();
 
         return Ok(response);
     }
@@ -66,7 +68,9 @@ public class CustomerController : ControllerBase
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<CustomerResponse>> CreateCustomer([FromBody] CustomerCreateRequest request)
+    public async Task<ActionResult<CustomerResponse>> CreateCustomer(
+        [FromBody] CustomerCreateRequest request
+    )
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -93,7 +97,7 @@ public class CustomerController : ControllerBase
             Id = customer.Id,
             Name = customer.Name,
             Phone = customer.Phone,
-            LawyerId = customer.LawyerId
+            LawyerId = customer.LawyerId,
         };
 
         return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.Id }, response);
@@ -131,8 +135,10 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to view this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, 
-                new ErrorResponse { Message = "You are not authorized to view this customer" });
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                new ErrorResponse { Message = "You are not authorized to view this customer" }
+            );
         }
 
         var response = new CustomerDetailResponse
@@ -141,13 +147,16 @@ public class CustomerController : ControllerBase
             Name = customer.Name,
             Phone = customer.Phone,
             LawyerId = customer.LawyerId,
-            Matters = customer.Matters?.Select(m => new MatterResponse
-            {
-                Id = m.Id,
-                Title = m.Title,
-                Description = m.Description,
-                CustomerId = m.CustomerId
-            }).ToList() ?? new List<MatterResponse>()
+            Matters =
+                customer
+                    .Matters?.Select(m => new MatterResponse
+                    {
+                        Id = m.Id,
+                        Title = m.Title,
+                        Description = m.Description,
+                        CustomerId = m.CustomerId,
+                    })
+                    .ToList() ?? new List<MatterResponse>(),
         };
 
         return Ok(response);
@@ -192,8 +201,10 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to update this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, 
-                new ErrorResponse { Message = "You are not authorized to update this customer" });
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                new ErrorResponse { Message = "You are not authorized to update this customer" }
+            );
         }
 
         // Update customer properties
@@ -207,7 +218,7 @@ public class CustomerController : ControllerBase
             Id = customer.Id,
             Name = customer.Name,
             Phone = customer.Phone,
-            LawyerId = customer.LawyerId
+            LawyerId = customer.LawyerId,
         };
 
         return Ok(response);
@@ -242,8 +253,10 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to delete this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, 
-                new ErrorResponse { Message = "You are not authorized to delete this customer" });
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                new ErrorResponse { Message = "You are not authorized to delete this customer" }
+            );
         }
 
         _context.Customers.Remove(customer);
@@ -291,5 +304,3 @@ public record CustomerDetailResponse
     public int LawyerId { get; set; }
     public required List<MatterResponse> Matters { get; set; }
 }
-
-

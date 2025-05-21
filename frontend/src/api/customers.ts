@@ -49,7 +49,10 @@ export type CustomerInput = CustomerCreateRequest;
  * Custom hook to fetch customers
  * @returns UseQueryResult with the customers data
  */
-export const useCustomersQuery = (): UseQueryResult<CustomerResponse[], Error> => {
+export const useCustomersQuery = (): UseQueryResult<
+  CustomerResponse[],
+  Error
+> => {
   return useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
@@ -70,7 +73,7 @@ export const useCustomersQuery = (): UseQueryResult<CustomerResponse[], Error> =
  * @returns UseQueryResult with the customer data
  */
 export const useCustomerQuery = (
-  id: number
+  id: number,
 ): UseQueryResult<CustomerDetailResponse, Error> => {
   return useQuery({
     queryKey: ["customers", id],
@@ -110,7 +113,9 @@ export const useCreateCustomerMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to create customer");
       }
 
@@ -136,7 +141,13 @@ export const useUpdateCustomerMutation = (): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: CustomerUpdateRequest }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: CustomerUpdateRequest;
+    }) => {
       const response = await fetch(`/api/customers/${id}`, {
         method: "PUT",
         headers: {
@@ -146,7 +157,9 @@ export const useUpdateCustomerMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to update customer");
       }
 
@@ -179,10 +192,12 @@ export const useDeleteCustomerMutation = (): UseMutationResult<
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as ErrorResponse));
+        const errorData = await response
+          .json()
+          .catch(() => ({}) as ErrorResponse);
         throw new Error(errorData.message || "Failed to delete customer");
       }
-      
+
       return response.json() as Promise<SuccessResponse>;
     },
     onSuccess: (_, id) => {

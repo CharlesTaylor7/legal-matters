@@ -58,19 +58,19 @@ public class MattersController : ControllerBase
         }
 
         // Get matters for the customer
-        var matters = await _context.Matters
-            .Where(m => m.CustomerId == customerId)
-            .ToListAsync();
+        var matters = await _context.Matters.Where(m => m.CustomerId == customerId).ToListAsync();
 
-        var response = matters.Select(m => new MatterResponse
-        {
-            Id = m.Id,
-            Title = m.Title,
-            Description = m.Description,
-            OpenDate = m.OpenDate,
-            Status = m.Status,
-            CustomerId = m.CustomerId
-        }).ToList();
+        var response = matters
+            .Select(m => new MatterResponse
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                OpenDate = m.OpenDate,
+                Status = m.Status,
+                CustomerId = m.CustomerId,
+            })
+            .ToList();
 
         return Ok(response);
     }
@@ -87,7 +87,10 @@ public class MattersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<MatterResponse>> CreateMatter(int customerId, [FromBody] MatterCreateRequest request)
+    public async Task<ActionResult<MatterResponse>> CreateMatter(
+        int customerId,
+        [FromBody] MatterCreateRequest request
+    )
     {
         // Validate permissions first
         var user = await _userManager.GetUserAsync(User);
@@ -124,7 +127,7 @@ public class MattersController : ControllerBase
             OpenDate = request.OpenDate ?? DateTime.UtcNow,
             Status = request.Status ?? MatterStatus.Open,
             CustomerId = customerId,
-            Customer = customer
+            Customer = customer,
         };
 
         _context.Matters.Add(matter);
@@ -137,7 +140,7 @@ public class MattersController : ControllerBase
             Description = matter.Description,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
-            CustomerId = matter.CustomerId
+            CustomerId = matter.CustomerId,
         };
 
         return CreatedAtAction(
@@ -182,8 +185,9 @@ public class MattersController : ControllerBase
         }
 
         // Get the matter
-        var matter = await _context.Matters
-            .FirstOrDefaultAsync(m => m.Id == matterId && m.CustomerId == customerId);
+        var matter = await _context.Matters.FirstOrDefaultAsync(m =>
+            m.Id == matterId && m.CustomerId == customerId
+        );
 
         if (matter == null)
         {
@@ -198,7 +202,7 @@ public class MattersController : ControllerBase
             OpenDate = matter.OpenDate,
             Status = matter.Status,
             CustomerId = matter.CustomerId,
-            CustomerName = customer.Name
+            CustomerName = customer.Name,
         };
 
         return Ok(response);

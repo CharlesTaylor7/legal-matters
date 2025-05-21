@@ -15,12 +15,14 @@ namespace LegalMatters.Migrations
                 table: "Customers",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_LawyerId",
                 table: "Customers",
-                column: "LawyerId");
+                column: "LawyerId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Customers_AspNetUsers_LawyerId",
@@ -28,7 +30,8 @@ namespace LegalMatters.Migrations
                 column: "LawyerId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Restrict
+            );
         }
 
         /// <inheritdoc />
@@ -36,15 +39,12 @@ namespace LegalMatters.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Customers_AspNetUsers_LawyerId",
-                table: "Customers");
+                table: "Customers"
+            );
 
-            migrationBuilder.DropIndex(
-                name: "IX_Customers_LawyerId",
-                table: "Customers");
+            migrationBuilder.DropIndex(name: "IX_Customers_LawyerId", table: "Customers");
 
-            migrationBuilder.DropColumn(
-                name: "LawyerId",
-                table: "Customers");
+            migrationBuilder.DropColumn(name: "LawyerId", table: "Customers");
         }
     }
 }
