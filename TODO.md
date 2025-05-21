@@ -10,9 +10,9 @@
 ## General
 - [x] Init Backend
 - [x] Setup database schema
-- [ ] authentication api routes
-- [ ] Doublecheck swagger docs
-- [ ] Implement customer API routes as authenticated routes
+- [x] authentication api routes
+- [x] Doublecheck swagger docs
+- [x] Implement customer API routes as authenticated routes
 - [ ] Implement matter API routes as authenticated routes
 - [ ] QA whole thing with swagger ui
 
