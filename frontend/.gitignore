@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/.angular
+/.sass-cache
+/playwright-report
+/test-results
