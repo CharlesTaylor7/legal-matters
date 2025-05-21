@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router";
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
   firmName: string;
 }
@@ -21,16 +21,22 @@ export interface ErrorResponse {
   message: string;
 }
 
-export interface LoginCredentials {
+export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface SignupCredentials {
+// Alias for backward compatibility
+export type LoginCredentials = LoginRequest;
+
+export interface SignupRequest {
   email: string;
   password: string;
   firmName: string;
 }
+
+// Alias for backward compatibility
+export type SignupCredentials = SignupRequest;
 
 
 
@@ -64,7 +70,7 @@ export const useAuthQuery = (): UseQueryResult<User | null> => {
 export const useLoginMutation = (): UseMutationResult<
   User,
   Error,
-  LoginCredentials,
+  LoginRequest,
   unknown
 > => {
   const queryClient = useQueryClient();
@@ -114,7 +120,7 @@ export const useLoginMutation = (): UseMutationResult<
 export const useSignupMutation = (): UseMutationResult<
   User,
   Error,
-  SignupCredentials,
+  SignupRequest,
   unknown
 > => {
   const queryClient = useQueryClient();
