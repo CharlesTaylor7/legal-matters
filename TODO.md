@@ -25,6 +25,7 @@
   - ensure all pages load the api/auth/me route to check logged in status
   - have the navbar greet the signed in user
 - [ ] Build Login UI
+  - api call missing
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
 - [ ] Eslint + prettier
