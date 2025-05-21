@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using LegalMatters.Models;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +33,6 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SuccessResponse>> SignUp([FromBody] SignupRequest request)
     {
-        Console.WriteLine(request);
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);

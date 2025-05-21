@@ -42,7 +42,10 @@
 - [ ] Auto populate swagger examples with valid values
 - [ ] Fixup CI/CD
   - [ ] Confirmation on the logout button?
+- [ ] Matter status should be text not enum, for the sake of swagger docs
+
 
 ## UI Tweaks
 - logout button is not aligned to navigtation items
 - login/signup Input box highlight overlaps label text. Removed focused style?
+

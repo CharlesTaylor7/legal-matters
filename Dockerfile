@@ -37,8 +37,8 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY --from=backend-build /app/backend/out ./
 COPY --from=backend-build /app/backend/efbundle ./
 
-# Copy frontend build artifacts to wwwroot
-# COPY --from=frontend-build /app/frontend/dist/tax-calculator/browser ./wwwroot
+# Copy frontend build artifacts 
+COPY --from=frontend-build /app/frontend/dist ./wwwroot
 
 # Expose ports
 EXPOSE 8080
