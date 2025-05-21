@@ -1,25 +1,25 @@
-# UK Tax Calculator API
+# Legal Matters API
 
-This is the backend API for the UK Tax Calculator application, built with ASP.NET Core, Entity Framework Core, and PostgreSQL. It provides endpoints for tax calculations and rule management.
-## Database Setup
+This is the backend API for the TODO
 
-To set up the database (macOS):
 
-1. Ensure PostgreSQL 16 is installed and running:
-   ```bash
-   brew install postgres@16
-   brew services start postgres
-   ```
-2. Create a superuser named `postgres`:
-   ```bash
-   createuser --superuser postgres
-   ```
-3. Run migrations:
-   ```bash
-   dotnet ef database update
-   ```
 
-(Adjust commands as needed for other platforms.)
+## Migrations management
+Migrations are managed through the dotnet ef CLI tool. 
+However, you need to use a wrapper script to ensure the postgres connection string is set from the .env file before running the cli. 
+
+Use the script `ef.sh`. All shell arguments will be forwarded to the underlying [dotnet-ef CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#common-options).
+
+Add a new migration:
+``` 
+./ef.sh migration add
+```
+
+See the whole CLI menu:
+```
+./ef.sh --help
+```
+
 
 ## API Endpoints
 
@@ -27,12 +27,13 @@ When running locally, the backend provides Swagger documentation summarizing the
 
 http://localhost:5000/swagger
 
-## Running the Application
+## Running with live reload
 
 To run the application, use the following command:
 
 ```bash
-dotnet run --project TaxCalculator
+docker compose up db migrate -d
+dotnet watch run
 ```
 
 The API will be available at http://localhost:5000

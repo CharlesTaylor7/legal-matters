@@ -1,12 +1,12 @@
 using System.Reflection;
+using dotenv.net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
-using TaxCalculator;
 using TaxCalculator.Data;
 using TaxCalculator.Repositories;
 using TaxCalculator.Services;
+
+DotEnv.Load(options: new DotEnvOptions(envFilePaths: [".env", "../.env"]));
 
 WebApplicationBuilder Configure()
 {
