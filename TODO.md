@@ -29,17 +29,16 @@
   - [x] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
   
 
-- [x] Build Login UI
-  - [ ] Input box highlight overlaps label text. Removed focused style?
-
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
-- [x] Eslint + prettier
 
 
 
 ## nice to have
 - [ ] Auto populate swagger examples with valid values
 - [ ] Fixup CI/CD
-
   - [ ] Confirmation on the logout button?
+
+## UI Tweaks
+- logout button is not aligned to navigtation items
+- login/signup Input box highlight overlaps label text. Removed focused style?
