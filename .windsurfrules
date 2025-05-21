@@ -1,1 +1,15 @@
+# .NET
 When writing controllers, please validate permissions first before running model validation.
+
+# React
+Tech Stack: 
+Vanilla React
+Vite
+Typescript
+Tailwind
+DaisyUI
+@tanstack/react-query
+
+React Router but only the declarative mode API. We are NOT using the framework or plugins or SSR. 
+
+

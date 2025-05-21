@@ -18,7 +18,12 @@
 
 
 ## Frontend
-- [ ] Init frontend - vite
+- [x] Init frontend - vite
+- [ ] Navbar
+  - highlight active page
+  - render into app page
+  - ensure all pages load the api/auth/me route to check logged in status
+  - have the navbar greet the signed in user
 - [ ] Build Login UI
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
