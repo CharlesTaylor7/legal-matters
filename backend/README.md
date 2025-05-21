@@ -3,11 +3,8 @@
 This is the backend API for the TODO
 
 
-
 ## Migrations management
-Migrations are managed through the dotnet ef CLI tool. 
-
-Use the script `ef.sh`. All shell arguments will be forwarded to the underlying [dotnet-ef CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#common-options).
+Migrations are managed through the [dotnet ef CLI tool](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#common-options) 
 
 Example commands:
 

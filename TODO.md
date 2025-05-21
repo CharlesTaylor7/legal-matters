@@ -2,10 +2,10 @@
 ## Infra / ops
 - [x] setup neon
 - [x] Decomission vercel
-- [ ] setup fly.io
+- [x] setup fly.io
+- [ ] get .env working with server + ef + docker
 - [ ] CI/CD for github actions to deploy
 - [ ] Get local docker setup working
-- [ ] get .env working with server + ef + docker
 
 ## General
 - [x] Init Backend

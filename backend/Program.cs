@@ -6,11 +6,16 @@ using TaxCalculator.Data;
 using TaxCalculator.Repositories;
 using TaxCalculator.Services;
 
-DotEnv.Load(options: new DotEnvOptions(envFilePaths: [".env", "../.env"]));
 
 WebApplicationBuilder Configure()
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    // for development only, we load the .env file
+    // production secrets are set via fly secrets cli
+    if (builder.Environment.IsDevelopment()) {
+        DotEnv.Load(options: new DotEnvOptions(envFilePaths: [ "../.env"]));
+    }
 
     // Add services to the container
     builder.Services.AddControllers();
@@ -51,7 +56,7 @@ WebApplicationBuilder Configure()
 
     // Configure PostgreSQL with Entity Framework Core
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
+        options.UseNpgsql(Environment.GetEnvironmentVariable("NPGSQL_CONNECTION"))
     );
 
     // Register repositories
