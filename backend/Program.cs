@@ -21,7 +21,7 @@ WebApplicationBuilder Configure()
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
         });
     });
 
@@ -33,13 +33,13 @@ WebApplicationBuilder Configure()
             new OpenApiInfo
             {
                 Version = "v1",
-                Title = "UK Tax Calculator API",
+                Title = "Legal Matters API",
                 Description =
                     "An ASP.NET Core Web API for calculating UK taxes based on gross annual salary",
                 Contact = new OpenApiContact
                 {
-                    Name = "Tax Calculator Team",
-                    Email = "support@taxcalculator.com",
+                    Name = "Legal Matters Team",
+                    Email = "support@legalmatters.com",
                 },
             }
         );
@@ -76,7 +76,7 @@ void Start(WebApplication app)
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "UK Tax Calculator API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Matters API v1");
         options.RoutePrefix = "swagger";
     });
 
