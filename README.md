@@ -24,17 +24,13 @@ However, this approach does not support live reloading. For live reload, see the
 
 ## Developing with Live Reload
 
-### 1. Set up PostgreSQL locally
+### 1. PostgreSQL 
 
-On macOS, use the following commands:
-
-```
-brew install postgres@17
-brew services start postgres
-createuser --superuser postgres
+```bash
+docker compose up db -d
 ```
 
-### 2. Start the frontend development server
+### 2. React dev server
 
 ```
 cd frontend
@@ -44,7 +40,7 @@ npm run dev
 
 If successful, the frontend will be served at http://localhost:3000
 
-### 3. Start the backend development server
+### 3. .NET dev server
 
 ```
 cd backend
@@ -52,7 +48,7 @@ cd backend
 dotnet tool restore
 
 # Apply migrations
-./ef.sh database update
+dotnet ef database update
 
 # Run server
 dotnet watch run

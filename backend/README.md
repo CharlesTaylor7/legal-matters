@@ -6,18 +6,19 @@ This is the backend API for the TODO
 
 ## Migrations management
 Migrations are managed through the dotnet ef CLI tool. 
-However, you need to use a wrapper script to ensure the postgres connection string is set from the .env file before running the cli. 
 
 Use the script `ef.sh`. All shell arguments will be forwarded to the underlying [dotnet-ef CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#common-options).
 
+Example commands:
+
 Add a new migration:
 ``` 
-./ef.sh migration add
+dotnet ef migration add <name>
 ```
 
-See the whole CLI menu:
+Apply database migrations:
 ```
-./ef.sh --help
+dotnet ef database update
 ```
 
 
