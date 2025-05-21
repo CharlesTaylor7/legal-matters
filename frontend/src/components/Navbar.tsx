@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface User {
@@ -8,6 +8,7 @@ interface User {
 }
 
 const Navbar = () => {
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   // Query to fetch the current user
@@ -58,7 +59,10 @@ const Navbar = () => {
     <div className="navbar bg-base-100 shadow-md flex flex-col md:flex-row py-2">
       {/* Title centered at the top */}
       <div className="w-full flex justify-center mb-2 md:mb-0 md:w-auto md:justify-start">
-        <Link to="/" className="btn btn-ghost text-xl">
+        <Link 
+          to="/" 
+          className={`btn btn-ghost text-xl ${location.pathname === "/" ? "text-primary" : ""}`}
+        >
           Legal Matters
         </Link>
       </div>
@@ -89,10 +93,20 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link to="/customers">Customers</Link>
+                <Link 
+                  to="/customers" 
+                  className={location.pathname === "/customers" ? "bg-primary text-primary-content rounded-md px-2" : ""}
+                >
+                  Customers
+                </Link>
               </li>
               <li>
-                <Link to="/matters">Matters</Link>
+                <Link 
+                  to="/matters" 
+                  className={location.pathname === "/matters" ? "bg-primary text-primary-content rounded-md px-2" : ""}
+                >
+                  Matters
+                </Link>
               </li>
             </ul>
           </div>
@@ -102,10 +116,20 @@ const Navbar = () => {
         {user && (
           <ul className="menu menu-horizontal px-1 hidden md:flex">
             <li>
-              <Link to="/customers">Customers</Link>
+              <Link 
+                to="/customers" 
+                className={location.pathname === "/customers" ? "bg-primary text-primary-content rounded-md px-2" : ""}
+              >
+                Customers
+              </Link>
             </li>
             <li>
-              <Link to="/matters">Matters</Link>
+              <Link 
+                to="/matters" 
+                className={location.pathname === "/matters" ? "bg-primary text-primary-content rounded-md px-2" : ""}
+              >
+                Matters
+              </Link>
             </li>
           </ul>
         )}

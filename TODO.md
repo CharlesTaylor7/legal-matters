@@ -19,13 +19,14 @@
 
 ## Frontend
 - [x] Init frontend - vite
+- [x] Home page greets the user
+- [ ] Set favicon to the justice scales emoji
 - [ ] Navbar
-  - highlight active page
   - [x] render into app page
-  - ensure all pages load the api/auth/me route to check logged in status
-  - have the navbar greet the signed in user
-- [ ] Build Login UI
-  - api call missing
+  - [x] ensure all pages load the api/auth/me route to check logged in status
+  - highlight active page
+
+- [x] Build Login UI
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
 - [ ] Eslint + prettier
