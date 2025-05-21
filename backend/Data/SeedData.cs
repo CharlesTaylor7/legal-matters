@@ -17,8 +17,15 @@ public static class LegalMattersSeedData
                 await roleManager.CreateAsync(new Role { Name = role });
         }
 
+        var adminEmail =
+            Environment.GetEnvironmentVariable("ADMIN_EMAIL")
+            ?? throw new Exception("ADMIN_EMAIL environment variable was not set!");
+
+        var adminPassword =
+            Environment.GetEnvironmentVariable("ADMIN_PASSWORD")
+            ?? throw new Exception("ADMIN_PASSWORD environment variable was not set!");
+
         // Ensure admin user exists
-        var adminEmail = "admin@legalmatters.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
@@ -31,9 +38,6 @@ public static class LegalMattersSeedData
                 CreatedAt = DateTime.UtcNow,
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
-            var adminPassword =
-                Environment.GetEnvironmentVariable("ADMIN_PASSWORD")
-                ?? throw new Exception("ADMIN_PASSWORD environment variable was not set!");
             var result = await userManager.CreateAsync(adminUser, adminPassword);
             if (!result.Succeeded)
             {
