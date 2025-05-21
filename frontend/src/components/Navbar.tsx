@@ -59,6 +59,48 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Title centered on mobile, left-aligned on desktop */}
+      <div
+        className={`${user ? "navbar-center md:navbar-start" : "navbar-start"} flex-1`}
+      >
+        <NavLink to="/" className="btn btn-ghost text-xl">
+          Legal Matters
+        </NavLink>
+      </div>
+
+      {/* Desktop menu - Only shown when user is logged in */}
+      {user && (
+        <div className="navbar-center hidden md:flex">
+          <ul className="menu menu-horizontal px-1">
+            <li>
+              <NavLink
+                to="/customers"
+                className={({ isActive }) => (isActive ? "menu-active" : "")}
+              >
+                Customers
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/matters"
+                className={({ isActive }) => (isActive ? "menu-active" : "")}
+              >
+                Matters
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Auth buttons - Only shown on desktop when logged in */}
+      <div className="navbar-end">
+        {user && (
+          <div className="hidden md:block">
+            <LogoutButton />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
