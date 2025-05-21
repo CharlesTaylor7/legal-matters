@@ -1,10 +1,8 @@
-# UK Tax Calculator
-
-A web application for calculating UK taxes, featuring a modern Angular frontend and .NET backend. See [ARCHITECTURE.md](./ARCHITECTURE.md) for a detailed overview of the system architecture.
+# Legal Matters 
 
 To quickly demo the deployed application, visit:
 
-https://uk-tax-app.fly.dev
+https://legal-matters.fly.dev
 
 ## Developing with Docker Compose
 
@@ -31,7 +29,7 @@ However, this approach does not support live reloading. For live reload, see the
 On macOS, use the following commands:
 
 ```
-brew install postgres@16
+brew install postgres@17
 brew services start postgres
 createuser --superuser postgres
 ```
@@ -44,7 +42,7 @@ npm install
 npm run dev
 ```
 
-If successful, the frontend will be served at http://localhost:4200
+If successful, the frontend will be served at http://localhost:3000
 
 ### 3. Start the backend development server
 
@@ -54,40 +52,20 @@ cd backend
 dotnet tool restore
 
 # Apply migrations
-dotnet ef database update
+./ef.sh database update
 
 # Run server
-dotnet watch run --project TaxCalculator
+dotnet watch run
 ```
 
 If successful, the backend will be available at http://localhost:5000
 
 ### Notes
-Access the application at http://localhost:4200. The frontend development server is configured to proxy requests to the backend.
+Access the application at http://localhost:3000. The frontend development server is configured to proxy requests to the backend.
 
 For Swagger API documentation, visit http://localhost:5000/swagger
 
-## End-to-End (E2E) Tests
-
-E2E tests are implemented with Playwright and can be run using Docker Compose:
-
-```
-docker compose --profile e2e build e2e
-docker compose run --rm e2e
-```
-
-## Unit Tests
-To run backend tests:
-
-```
-cd backend
-dotnet test
-```
-
-Note: Frontend unit tests are not implemented; only E2E tests are provided.
-
-
 ## CI/CD and Deployments
-This project uses GitHub Actions for CI/CD. All pushes to the main branch automatically run both E2E and unit tests. On success, the application is deployed to https://uk-tax-app.fly.dev
+This project uses GitHub Actions for CI/CD. All pushes to the main branch automatically run both E2E and unit tests. On success, the application is deployed to https://legal-matters.fly.dev
 
 All pull requests to main require tests to pass before merging.

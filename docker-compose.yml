@@ -13,7 +13,6 @@ services:
       timeout: 5s
       retries: 5
       
-
   app:
     build: .
     container_name: legal-matters
@@ -34,7 +33,7 @@ services:
         
   migrate:
     build: .
-    container_name: migrate
+    container_name: legal-matters-migrate
     entrypoint: ["/app/efbundle"]
     environment:
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=taxcalculator;Username=postgres;Password=postgres"
@@ -42,19 +41,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  e2e:
-    profiles: ["e2e"]
-    build:
-      dockerfile: Dockerfile.playwright
-      context: .
-    container_name: e2e
-    depends_on:
-      app:
-        condition: service_healthy
-    environment:       
-      CI: 1
-    network_mode: "service:app"
 
 volumes:
   postgres_data:
