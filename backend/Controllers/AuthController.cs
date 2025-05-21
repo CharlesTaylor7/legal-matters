@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using LegalMatters.Models;
-using LegalMatters.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LegalMatters.Controllers;
@@ -11,11 +10,13 @@ namespace LegalMatters.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
 
-    public AuthController(AuthService authService)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
     {
-        _authService = authService;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     /// <summary>
@@ -42,10 +43,21 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var success = await _authService.SignUpAsync(request.Email, request.Password, request.FirmName);
-        if (!success)
+        var user = new User
         {
-            return BadRequest(new { message = "Email already in use" });
+            UserName = request.Email,
+            Email = request.Email,
+            FirmName = request.FirmName,
+        };
+
+        var result = await _userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return BadRequest(ModelState);
         }
 
         return Ok(new { message = "User created successfully" });
@@ -74,8 +86,14 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var success = await _authService.LoginAsync(request.Email, request.Password);
-        if (!success)
+        var result = await _signInManager.PasswordSignInAsync(
+            request.Email,
+            request.Password,
+            isPersistent: true,
+            lockoutOnFailure: false
+        );
+
+        if (!result.Succeeded)
         {
             return Unauthorized(new { message = "Invalid email or password" });
         }
@@ -91,18 +109,20 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        var user = await _authService.GetCurrentUserAsync();
+        var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return Unauthorized(new { message = "Not authenticated" });
         }
 
-        return Ok(new UserResponse
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FirmName = user.FirmName
-        });
+        return Ok(
+            new UserResponse
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirmName = user.FirmName,
+            }
+        );
     }
 
     /// <summary>
@@ -113,12 +133,11 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        await _authService.SignOutAsync();
+        await _signInManager.SignOutAsync();
         return Ok(new { message = "Logged out successfully" });
     }
 }
 
-// Request and response models
 public class SignupRequest
 {
     [Required]

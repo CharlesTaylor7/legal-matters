@@ -2,7 +2,6 @@ using System.Reflection;
 using dotenv.net;
 using LegalMatters.Data;
 using LegalMatters.Models;
-using LegalMatters.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -24,24 +23,6 @@ WebApplicationBuilder Configure()
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddHttpContextAccessor();
-
-    // Configure Cookie Authentication
-    builder
-        .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.Cookie.HttpOnly = true;
-            options.Cookie.SameSite = SameSiteMode.Lax;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-            options.ExpireTimeSpan = TimeSpan.FromDays(7);
-            options.SlidingExpiration = true;
-            options.Events.OnRedirectToLogin = context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return Task.CompletedTask;
-            };
-        });
-    builder.Services.AddAuthorization();
 
     if (builder.Environment.IsDevelopment())
     {
@@ -87,15 +68,46 @@ WebApplicationBuilder Configure()
     // Register repositories
 
     // Register application services
-    builder.Services.AddScoped<AuthService>();
 
     // Add health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
 
+    // Configure Identity and Authentication
     builder
-        .Services.AddIdentity<User, Role>()
+        .Services.AddIdentity<User, Role>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 6;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+
+            // User settings
+            options.User.RequireUniqueEmail = true;
+        })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
+
+    // Configure Cookie Authentication
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+    });
+    builder.Services.AddAuthorization();
 
     return builder;
 }
@@ -114,9 +126,9 @@ async Task Start(WebApplication app)
     app.UseRouting();
     app.UseCors();
 
-    // // Add authentication and authorization middleware
-    // app.UseAuthentication();
-    // app.UseAuthorization();
+    // Add authentication and authorization middleware
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapControllers();
     app.MapHealthChecks("/health");

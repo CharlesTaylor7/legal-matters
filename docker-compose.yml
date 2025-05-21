@@ -1,6 +1,5 @@
 services:
   db:
-    env_file: .env
     image: postgres:17
     container_name: legal-matters-db
     ports:
@@ -12,6 +11,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: legal_matters
       
   app:
     env_file: .env
