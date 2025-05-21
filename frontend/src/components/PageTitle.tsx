@@ -1,32 +1,24 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router";
+import { useMatches } from "react-router";
 
 const PageTitle = () => {
-  const location = useLocation();
-  
+  const matches = useMatches();
+
+  // Define page titles based on routes
   useEffect(() => {
-    // Define page titles based on routes
-    const getTitleFromPath = (path: string): string => {
-      switch (path) {
-        case "/":
-          return "Home | Legal Matters";
-        case "/customers":
-          return "Customers | Legal Matters";
-        case "/matters":
-          return "Matters | Legal Matters";
-        case "/login":
-          return "Login | Legal Matters";
-        case "/signup":
-          return "Sign Up | Legal Matters";
-        default:
-          return "Legal Matters";
-      }
-    };
-    
+    const mostSpecificTitle = matches
+      .reverse()
+      // @ts-expect-error TODO: figure out how to override handle type
+      .map((match) => match.handle?.title)
+      .filter((title) => title)[0];
+
+    const pageTitle = mostSpecificTitle
+      ? `${mostSpecificTitle} | Legal Matters`
+      : "Legal Matters";
     // Update document title
-    document.title = getTitleFromPath(location.pathname);
-  }, [location.pathname]);
-  
+    document.title = pageTitle;
+  }, [matches]);
+
   // This component doesn't render anything
   return null;
 };
