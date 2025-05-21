@@ -25,3 +25,7 @@
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
 
+
+
+## nice to have
+- [ ] Auto populate swagger examples with valid values

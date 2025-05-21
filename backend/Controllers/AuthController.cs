@@ -38,6 +38,7 @@ public class AuthController : ControllerBase
     [HttpPost("signup")]
     public async Task<IActionResult> SignUp([FromBody] SignupRequest request)
     {
+        Console.WriteLine(request);
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -138,7 +139,7 @@ public class AuthController : ControllerBase
     }
 }
 
-public class SignupRequest
+public record SignupRequest
 {
     [Required]
     [EmailAddress]
@@ -152,17 +153,19 @@ public class SignupRequest
     public required string FirmName { get; set; }
 }
 
-public class LoginRequest
+public record LoginRequest
 {
     [Required]
     [EmailAddress]
+    /// <example>user@example.com</example>
     public required string Email { get; set; }
 
     [Required]
+    /// <example>password123</example>
     public required string Password { get; set; }
 }
 
-public class UserResponse
+public record UserResponse
 {
     public int Id { get; set; }
     public required string Email { get; set; }
