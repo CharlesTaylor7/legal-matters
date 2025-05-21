@@ -27,8 +27,7 @@
   - [x] highlight active page
   - [ ] USe Activeclassname menu-active
   - [ ] links and hovers and overlapping and shifting is unsightly
-  - [ ] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
-  - [ ] Confirmation on the logout button?
+  - [x] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
   
 
 - [x] Build Login UI
@@ -43,3 +42,5 @@
 ## nice to have
 - [ ] Auto populate swagger examples with valid values
 - [ ] Fixup CI/CD
+
+  - [ ] Confirmation on the logout button?

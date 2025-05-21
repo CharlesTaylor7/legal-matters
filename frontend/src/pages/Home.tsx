@@ -1,20 +1,19 @@
-import { Link, useLoaderData } from "react-router";
-
-interface User {
-  id: string;
-  email: string;
-  firmName: string;
-}
+import { Link } from "react-router";
+import { useAuthQuery } from "../api";
 
 const Home = () => {
-  // Get user data from the loader
-  const user = useLoaderData() as User | null;
+  // Get user data from the query
+  const { data: user, isLoading } = useAuthQuery();
 
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          {user ? (
+          {isLoading ? (
+            <div className="flex justify-center">
+              <span className="loading loading-spinner loading-lg"></span>
+            </div>
+          ) : user ? (
             <>
               <h1 className="text-5xl font-bold">Welcome back!</h1>
               <div className="mt-4 p-4 bg-base-100 rounded-lg shadow-md">

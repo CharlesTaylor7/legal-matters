@@ -9,7 +9,19 @@ Typescript
 Tailwind
 DaisyUI
 @tanstack/react-query
-
 React Router with the data mode API. We are NOT using the framework or plugins or SSR. 
 
+Please use NavLink with the className={({ isActive})} helper to enable menu-active
+please do not use loaders, make new custom hooks in api.ts that leverage react-query to call the api. Consult @instructions for the api structure.
 
+Please do not use fake data on the frontend.
+
+Please write components as functions with a default export like this
+
+```tsx
+export default function FooComponent(props: FooProps) {
+...
+}
+```
+
+The api is served from the host as the app. Please do not set fetch "credentials": true.

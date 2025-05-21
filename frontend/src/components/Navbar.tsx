@@ -1,28 +1,20 @@
-import { Link, useLocation, useNavigate, useRouteLoaderData } from "react-router";
+import { NavLink } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useAuthQuery } from "../api";
 
-interface User {
-  id: string;
-  email: string;
-  firmName: string;
-}
-
-const Navbar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+export default function Navbar() {
   const queryClient = useQueryClient();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Get user data from the root loader
-  const user = useRouteLoaderData("root") as User | null;
+  // Get user data from the query
+  const { data: user, isLoading } = useAuthQuery();
 
   // Mutation for logout
   const logoutMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
       });
 
       if (!response.ok) {
@@ -38,11 +30,6 @@ const Navbar = () => {
   const handleLogout = () => {
     setIsMenuOpen(false);
     logoutMutation.mutate();
-  };
-
-  const handleNavigation = (path: string) => {
-    setIsMenuOpen(false);
-    navigate(path);
   };
 
   return (
@@ -77,20 +64,26 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a
-                  onClick={() => handleNavigation("/customers")}
-                  className={`cursor-pointer ${location.pathname === "/customers" ? "bg-primary text-primary-content rounded-md px-2" : ""}`}
+                <NavLink
+                  to="/customers"
+                  className={({ isActive }) =>
+                    `cursor-pointer ${isActive ? "menu-active" : ""}`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Customers
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a
-                  onClick={() => handleNavigation("/matters")}
-                  className={`cursor-pointer ${location.pathname === "/matters" ? "bg-primary text-primary-content rounded-md px-2" : ""}`}
+                <NavLink
+                  to="/matters"
+                  className={({ isActive }) =>
+                    `menu-item ${isActive ? "menu-active" : ""}`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Matters
-                </a>
+                </NavLink>
               </li>
               <li className="mt-2 border-t pt-2">
                 <button
@@ -114,12 +107,9 @@ const Navbar = () => {
       <div
         className={`${user ? "navbar-center md:navbar-start" : "navbar-start"} flex-1`}
       >
-        <Link
-          to="/"
-          className={`btn btn-ghost text-xl ${location.pathname === "/" ? "text-primary" : ""}`}
-        >
+        <NavLink to="/" className="btn btn-ghost text-xl">
           Legal Matters
-        </Link>
+        </NavLink>
       </div>
 
       {/* Desktop menu - Only shown when user is logged in */}
@@ -127,28 +117,20 @@ const Navbar = () => {
         <div className="navbar-center hidden md:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <Link
+              <NavLink
                 to="/customers"
-                className={
-                  location.pathname === "/customers"
-                    ? "bg-primary text-primary-content rounded-md px-2"
-                    : ""
-                }
+                className={({ isActive }) => (isActive ? "menu-active" : "")}
               >
                 Customers
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link
+              <NavLink
                 to="/matters"
-                className={
-                  location.pathname === "/matters"
-                    ? "bg-primary text-primary-content rounded-md px-2"
-                    : ""
-                }
+                className={({ isActive }) => (isActive ? "menu-active" : "")}
               >
                 Matters
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -174,6 +156,4 @@ const Navbar = () => {
       </div>
     </div>
   );
-};
-
-export default Navbar;
+}

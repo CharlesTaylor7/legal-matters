@@ -1,18 +1,29 @@
-import { ReactNode } from "react";
-import { Navigate, useLoaderData } from "react-router";
+import { type ReactNode } from "react";
+import { Navigate } from "react-router";
+import { useAuthQuery } from "../api";
 
-// This component is now simplified since protection is handled by the router
-// It's kept for backward compatibility or for cases where you need to use the user data
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  // The user data is now loaded by the router and available via useLoaderData
-  const user = useLoaderData();
-  
-  // Render children since authentication is already verified by the loader
-  return <>{children}</>;
-};
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  // Use the auth query hook to check if user is authenticated
+  const { data: user, isLoading } = useAuthQuery();
 
-export default ProtectedRoute;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Render children if authenticated
+  return <>{children}</>;
+}
