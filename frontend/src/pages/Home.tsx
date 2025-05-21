@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 
 interface User {
   id: string;
@@ -8,35 +7,14 @@ interface User {
 }
 
 const Home = () => {
-  // Query to fetch the current user
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: async () => {
-      const response = await fetch("/api/auth/me", {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Not authenticated, but not an error
-          return null;
-        }
-        throw new Error("Failed to fetch user data");
-      }
-
-      return response.json() as Promise<User>;
-    },
-  });
+  // Get user data from the loader
+  const user = useLoaderData() as User | null;
 
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          {isLoading ? (
-            <div className="flex justify-center">
-              <span className="loading loading-spinner loading-lg"></span>
-            </div>
-          ) : user ? (
+          {user ? (
             <>
               <h1 className="text-5xl font-bold">Welcome back!</h1>
               <div className="mt-4 p-4 bg-base-100 rounded-lg shadow-md">

@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useLocation, useNavigate, useRouteLoaderData } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface User {
@@ -14,25 +14,8 @@ const Navbar = () => {
   const queryClient = useQueryClient();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Query to fetch the current user
-  //
-  // TODO:  abstract away api call query options to separate api/ folder
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: async () => {
-      const response = await fetch("/api/auth/me");
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Not authenticated, but not an error
-          return null;
-        }
-        throw new Error("Failed to fetch user data");
-      }
-
-      return response.json() as Promise<User>;
-    },
-  });
+  // Get user data from the root loader
+  const user = useRouteLoaderData("root") as User | null;
 
   // Mutation for logout
   const logoutMutation = useMutation({

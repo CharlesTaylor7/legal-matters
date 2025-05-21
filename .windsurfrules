@@ -10,6 +10,6 @@ Tailwind
 DaisyUI
 @tanstack/react-query
 
-React Router but only the declarative mode API. We are NOT using the framework or plugins or SSR. 
+React Router with the data mode API. We are NOT using the framework or plugins or SSR. 
 
 
