@@ -1,9 +1,11 @@
 using System.Reflection;
 using dotenv.net;
 using LegalMatters.Data;
+using LegalMatters.Models;
 using LegalMatters.Services;
-// using LegalMatters.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -22,9 +24,10 @@ WebApplicationBuilder Configure()
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddHttpContextAccessor();
-    
+
     // Configure Cookie Authentication
-    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    builder
+        .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
             options.Cookie.HttpOnly = true;
@@ -89,27 +92,32 @@ WebApplicationBuilder Configure()
     // Add health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
 
+    builder
+        .Services.AddIdentity<User, Role>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
     return builder;
 }
 
-void Start(WebApplication app)
+async Task Start(WebApplication app)
 {
-    // Configure the HTTP request pipeline
-    if (app.Environment.IsDevelopment())
+    using (var scope = app.Services.CreateScope())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Matters API v1"));
+        await LegalMattersSeedData.SeedAsync(scope.ServiceProvider);
     }
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Matters API v1"));
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseRouting();
     app.UseCors();
-    
-    // Add authentication and authorization middleware
-    app.UseAuthentication();
-    app.UseAuthorization();
-    
+
+    // // Add authentication and authorization middleware
+    // app.UseAuthentication();
+    // app.UseAuthorization();
+
     app.MapControllers();
     app.MapHealthChecks("/health");
 
@@ -121,4 +129,4 @@ void Start(WebApplication app)
     app.Run();
 }
 
-Start(Configure().Build());
+await Start(Configure().Build());

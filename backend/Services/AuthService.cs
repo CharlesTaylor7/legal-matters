@@ -6,8 +6,8 @@ using LegalMatters.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using BC = BCrypt.Net.BCrypt;
 
 namespace LegalMatters.Services;
 
@@ -15,11 +15,13 @@ public class AuthService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IPasswordHasher<User> _passwordHasher;
 
-    public AuthService(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public AuthService(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, IPasswordHasher<User> passwordHasher)
     {
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<User?> GetCurrentUserAsync()
@@ -47,16 +49,18 @@ public class AuthService
             return false;
         }
 
-        // Hash password
-        string passwordHash = BC.HashPassword(password);
-
-        // Create new user
+        // Hash password using ASP.NET Core Identity's password hasher
         var user = new User
         {
             Email = email,
-            PasswordHash = passwordHash,
-            FirmName = firmName
+            FirmName = firmName,
+            PasswordHash = "" // Temporary value, will be set below
         };
+        
+        string passwordHash = _passwordHasher.HashPassword(user, password);
+
+        // Set the hashed password
+        user.PasswordHash = passwordHash;
 
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
@@ -75,8 +79,9 @@ public class AuthService
             return false;
         }
 
-        // Verify password
-        if (!BC.Verify(password, user.PasswordHash))
+        // Verify password using ASP.NET Core Identity's password hasher
+        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+        if (result != PasswordVerificationResult.Success)
         {
             return false;
         }
@@ -102,16 +107,18 @@ public class AuthService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim("FirmName", user.FirmName)
+            new Claim("FirmName", user.FirmName),
         };
 
         var claimsIdentity = new ClaimsIdentity(
-            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
 
         var authProperties = new AuthenticationProperties
         {
             IsPersistent = true,
-            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
         };
 
         var httpContext = _httpContextAccessor.HttpContext;
@@ -120,7 +127,8 @@ public class AuthService
             await httpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                authProperties
+            );
         }
     }
 }

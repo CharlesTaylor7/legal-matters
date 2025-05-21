@@ -1,21 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace LegalMatters.Models;
 
-public class User
+public class User : IdentityUser<int>
 {
     [Key]
-    public int Id { get; set; }
-
-    [Required]
-    [EmailAddress]
-    [StringLength(100)]
-    public required string Email { get; set; }
-
-    [Required]
-    [StringLength(100)]
-    public required string PasswordHash { get; set; }
+    public override int Id { get; set; }
 
     [Required]
     [StringLength(100)]
