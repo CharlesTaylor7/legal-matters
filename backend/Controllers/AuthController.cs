@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using LegalMatters.Models;
+using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +30,9 @@ public class AuthController : ControllerBase
     /// <param name="request">User signup information</param>
     /// <returns>Success message or error</returns>
     [HttpPost("signup")]
-    public async Task<IActionResult> SignUp([FromBody] SignupRequest request)
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<SuccessResponse>> SignUp([FromBody] SignupRequest request)
     {
         Console.WriteLine(request);
         if (!ModelState.IsValid)
@@ -53,7 +57,7 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        return Ok(new { message = "User created successfully" });
+        return Ok(new SuccessResponse { Message = "User created successfully" });
     }
 
     /// <summary>
@@ -72,7 +76,10 @@ public class AuthController : ControllerBase
     /// <param name="request">Login credentials</param>
     /// <returns>Success message or error</returns>
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<SuccessResponse>> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -88,10 +95,10 @@ public class AuthController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return Unauthorized(new { message = "Invalid email or password" });
+            return Unauthorized(new ErrorResponse { Message = "Invalid email or password" });
         }
 
-        return Ok(new { message = "Login successful" });
+        return Ok(new SuccessResponse { Message = "Login successful" });
     }
 
     /// <summary>
@@ -100,12 +107,14 @@ public class AuthController : ControllerBase
     /// <returns>User information</returns>
     [HttpGet("me")]
     [Authorize]
-    public async Task<IActionResult> GetCurrentUser()
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<UserResponse>> GetCurrentUser()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            return Unauthorized(new { message = "Not authenticated" });
+            return Unauthorized(new ErrorResponse { Message = "Not authenticated" });
         }
 
         return Ok(
@@ -128,10 +137,12 @@ public class AuthController : ControllerBase
     /// <returns>Success message</returns>
     [HttpPost("logout")]
     [Authorize]
-    public async Task<IActionResult> Logout()
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<SuccessResponse>> Logout()
     {
         await _signInManager.SignOutAsync();
-        return Ok(new { message = "Logged out successfully" });
+        return Ok(new SuccessResponse { Message = "Logged out successfully" });
     }
 }
 

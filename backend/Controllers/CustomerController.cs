@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using LegalMatters.Data;
 using LegalMatters.Models;
+using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +29,9 @@ public class CustomerController : ControllerBase
     /// </summary>
     /// <returns>List of customers</returns>
     [HttpGet]
-    public async Task<IActionResult> GetCustomers()
+    [ProducesResponseType(typeof(List<CustomerResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<List<CustomerResponse>>> GetCustomers()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -42,7 +46,15 @@ public class CustomerController : ControllerBase
             ? await _context.Customers.ToListAsync()
             : await _context.Customers.Where(c => c.LawyerId == user.Id).ToListAsync();
 
-        return Ok(customers);
+        var response = customers.Select(c => new CustomerResponse
+        {
+            Id = c.Id,
+            Name = c.Name,
+            Phone = c.Phone,
+            LawyerId = c.LawyerId
+        }).ToList();
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -51,7 +63,10 @@ public class CustomerController : ControllerBase
     /// <param name="request">Customer creation request</param>
     /// <returns>Created customer</returns>
     [HttpPost]
-    public async Task<IActionResult> CreateCustomer([FromBody] CustomerCreateRequest request)
+    [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<CustomerResponse>> CreateCustomer([FromBody] CustomerCreateRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -73,7 +88,15 @@ public class CustomerController : ControllerBase
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.Id }, customer);
+        var response = new CustomerResponse
+        {
+            Id = customer.Id,
+            Name = customer.Name,
+            Phone = customer.Phone,
+            LawyerId = customer.LawyerId
+        };
+
+        return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.Id }, response);
     }
 
     /// <summary>
@@ -82,7 +105,11 @@ public class CustomerController : ControllerBase
     /// <param name="customerId">ID of the customer to retrieve</param>
     /// <returns>Customer details</returns>
     [HttpGet("{customerId}")]
-    public async Task<IActionResult> GetCustomer(int customerId)
+    [ProducesResponseType(typeof(CustomerDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerDetailResponse>> GetCustomer(int customerId)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -104,10 +131,26 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to view this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return Forbid();
+            return StatusCode(StatusCodes.Status403Forbidden, 
+                new ErrorResponse { Message = "You are not authorized to view this customer" });
         }
 
-        return Ok(customer);
+        var response = new CustomerDetailResponse
+        {
+            Id = customer.Id,
+            Name = customer.Name,
+            Phone = customer.Phone,
+            LawyerId = customer.LawyerId,
+            Matters = customer.Matters?.Select(m => new MatterResponse
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                CustomerId = m.CustomerId
+            }).ToList() ?? new List<MatterResponse>()
+        };
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -117,7 +160,12 @@ public class CustomerController : ControllerBase
     /// <param name="request">Customer update request</param>
     /// <returns>Updated customer</returns>
     [HttpPut("{customerId}")]
-    public async Task<IActionResult> UpdateCustomer(
+    [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerResponse>> UpdateCustomer(
         int customerId,
         [FromBody] CustomerUpdateRequest request
     )
@@ -144,7 +192,8 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to update this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return Forbid();
+            return StatusCode(StatusCodes.Status403Forbidden, 
+                new ErrorResponse { Message = "You are not authorized to update this customer" });
         }
 
         // Update customer properties
@@ -153,7 +202,15 @@ public class CustomerController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return Ok(customer);
+        var response = new CustomerResponse
+        {
+            Id = customer.Id,
+            Name = customer.Name,
+            Phone = customer.Phone,
+            LawyerId = customer.LawyerId
+        };
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -162,7 +219,11 @@ public class CustomerController : ControllerBase
     /// <param name="customerId">ID of the customer to delete</param>
     /// <returns>Success message</returns>
     [HttpDelete("{customerId}")]
-    public async Task<IActionResult> DeleteCustomer(int customerId)
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SuccessResponse>> DeleteCustomer(int customerId)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -181,13 +242,14 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to delete this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return Forbid();
+            return StatusCode(StatusCodes.Status403Forbidden, 
+                new ErrorResponse { Message = "You are not authorized to delete this customer" });
         }
 
         _context.Customers.Remove(customer);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Customer deleted successfully" });
+        return Ok(new SuccessResponse { Message = "Customer deleted successfully" });
     }
 }
 
@@ -212,3 +274,22 @@ public record CustomerUpdateRequest
     [StringLength(20)]
     public required string Phone { get; set; }
 }
+
+public record CustomerResponse
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public required string Phone { get; set; }
+    public int LawyerId { get; set; }
+}
+
+public record CustomerDetailResponse
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public required string Phone { get; set; }
+    public int LawyerId { get; set; }
+    public required List<MatterResponse> Matters { get; set; }
+}
+
+

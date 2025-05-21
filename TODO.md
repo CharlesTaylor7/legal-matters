@@ -14,6 +14,8 @@
 - [x] Implement customer API routes as authenticated routes
 - [x] Implement matter API routes as authenticated routes
 - [ ] Dedicated response objects for each controller route
+  - we have to do this because the AI is returning in models in some cases, and swagger is not picking up the docs
+
 - [ ] QA whole thing with swagger ui
     - playwright maybe?
 
@@ -29,7 +31,7 @@
   - [x] USe Activeclassname menu-active
   - [x] Mobile site, the hamburger menu and logout button should be in the same row as the page title.
   
-
+- [] redo the api files based on the c# controllers.
 - [ ] Build Customers UI
 - [ ] Build Matters  UI
 
