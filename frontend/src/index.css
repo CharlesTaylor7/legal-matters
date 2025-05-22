@@ -1,2 +1,22 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@layer base {
+  /* Remove focus outline/shadow from all form elements */
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus,
+  .select:focus,
+  .input:focus,
+  .textarea:focus,
+  .btn:focus {
+    @apply outline-none shadow-none;
+  }
+  
+  /* Remove ring/outline when focused */
+  *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
