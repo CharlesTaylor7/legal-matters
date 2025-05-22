@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import type { SuccessResponse } from "./types";
+import type { SuccessResponse } from "@/api/types";
 
 export interface User {
   id: number;
