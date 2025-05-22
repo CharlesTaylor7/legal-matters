@@ -61,7 +61,6 @@ WebApplicationBuilder Configure()
     });
 
     var connection = Environment.GetEnvironmentVariable("NPGSQL_CONNECTION");
-    Console.WriteLine(connection);
     // Configure PostgreSQL with Entity Framework Core
     builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
 
