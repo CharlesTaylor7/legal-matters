@@ -5,6 +5,7 @@ import {
   useUpdateCustomerMutation,
   type CustomerUpdateRequest,
 } from "../../api/customers";
+import PhoneInput from "../../components/PhoneNumberInput";
 
 export default function EditCustomer() {
   const navigate = useNavigate();
@@ -124,14 +125,14 @@ export default function EditCustomer() {
               <label className="label md:hidden">
                 <span className="label-text">Phone Number</span>
               </label>
-              <input
+              <PhoneInput
                 type="tel"
                 className="input input-bordered w-full"
                 value={customerData.phone}
-                onChange={(e) =>
+                onChange={(phone) =>
                   setCustomerData({
                     ...customerData,
-                    phone: e.target.value,
+                    phone,
                   })
                 }
                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
@@ -139,14 +140,6 @@ export default function EditCustomer() {
                 placeholder="123-456-7890"
                 required
               />
-              <div className="text-error text-sm mt-1">
-                {customerData.phone &&
-                  !/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/.test(customerData.phone) && (
-                    <span>
-                      Please enter a valid phone number (XXX-XXX-XXXX)
-                    </span>
-                  )}
-              </div>
             </div>
           </div>
 

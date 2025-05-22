@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using LegalMatters.Data;
 using LegalMatters.Models;
+using LegalMatters.Services;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +18,17 @@ public class CustomerController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly IPhoneNumberService _phoneNumberService;
 
-    public CustomerController(ApplicationDbContext context, UserManager<User> userManager)
+    public CustomerController(
+        ApplicationDbContext context,
+        UserManager<User> userManager,
+        IPhoneNumberService phoneNumberService
+    )
     {
         _context = context;
         _userManager = userManager;
+        _phoneNumberService = phoneNumberService;
     }
 
     /// <summary>
@@ -59,7 +66,7 @@ public class CustomerController : ControllerBase
             {
                 Id = c.Id,
                 Name = c.Name,
-                Phone = c.Phone,
+                Phone = _phoneNumberService.FormatPhoneNumber(c.Phone),
                 LawyerId = c.LawyerId,
                 OpenMattersCount = matterCounts.ContainsKey(c.Id) ? matterCounts[c.Id] : 0,
             })
@@ -93,7 +100,7 @@ public class CustomerController : ControllerBase
         var customer = new Customer
         {
             Name = request.Name,
-            Phone = request.Phone,
+            Phone = _phoneNumberService.NormalizePhoneNumber(request.Phone),
             LawyerId = user.Id,
             Lawyer = user,
         };
@@ -105,7 +112,7 @@ public class CustomerController : ControllerBase
         {
             Id = customer.Id,
             Name = customer.Name,
-            Phone = customer.Phone,
+            Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
         };
 
@@ -154,7 +161,7 @@ public class CustomerController : ControllerBase
         {
             Id = customer.Id,
             Name = customer.Name,
-            Phone = customer.Phone,
+            Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
             Matters =
                 customer
@@ -218,7 +225,7 @@ public class CustomerController : ControllerBase
 
         // Update customer properties
         customer.Name = request.Name;
-        customer.Phone = request.Phone;
+        customer.Phone = _phoneNumberService.NormalizePhoneNumber(request.Phone);
 
         await _context.SaveChangesAsync();
 
@@ -226,7 +233,7 @@ public class CustomerController : ControllerBase
         {
             Id = customer.Id,
             Name = customer.Name,
-            Phone = customer.Phone,
+            Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone,
             LawyerId = customer.LawyerId,
         };
 
@@ -304,13 +311,4 @@ public record CustomerResponse
     public required string Phone { get; set; }
     public int LawyerId { get; set; }
     public int OpenMattersCount { get; set; }
-}
-
-public record CustomerDetailResponse
-{
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public required string Phone { get; set; }
-    public int LawyerId { get; set; }
-    public required List<MatterResponse> Matters { get; set; }
 }

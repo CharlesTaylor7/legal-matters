@@ -2,6 +2,7 @@ using System.Reflection;
 using dotenv.net;
 using LegalMatters.Data;
 using LegalMatters.Models;
+using LegalMatters.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -59,7 +60,6 @@ WebApplicationBuilder Configure()
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     });
 
-    Console.WriteLine(Environment.GetEnvironmentVariable("NPGSQL_CONNECTION"));
     // Configure PostgreSQL with Entity Framework Core
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(Environment.GetEnvironmentVariable("NPGSQL_CONNECTION"))
@@ -68,6 +68,7 @@ WebApplicationBuilder Configure()
     // Register repositories
 
     // Register application services
+    builder.Services.AddScoped<IPhoneNumberService, USPhoneNumberService>();
 
     // Add health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
