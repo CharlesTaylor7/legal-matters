@@ -30,6 +30,7 @@ const Matters = () => {
     title: "",
     description: "",
     openDate: new Date().toISOString().split('T')[0],
+    // Always set status to Open for new matters
     status: MatterStatus.Open,
   });
   
@@ -125,10 +126,16 @@ const Matters = () => {
     e.preventDefault();
     if (!selectedCustomerId) return;
 
+    // Ensure status is always Open for new matters
+    const dataWithOpenStatus = {
+      ...formData,
+      status: MatterStatus.Open
+    };
+
     createMatterMutation.mutate(
       {
         customerId: selectedCustomerId,
-        data: formData,
+        data: dataWithOpenStatus,
       },
       {
         onSuccess: () => {
@@ -326,62 +333,53 @@ const Matters = () => {
       {/* Add Matter Modal */}
       {isAddModalOpen && (
         <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Add New Matter</h3>
+          <div className="modal-box max-w-2xl">
+            <h3 className="font-bold text-lg mb-6">Add New Matter</h3>
             <form onSubmit={handleCreateMatter}>
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Title</span>
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className="input input-bordered"
-                  required
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
+                <label className="self-center font-medium text-right hidden md:block">Title</label>
+                <div className="form-control w-full">
+                  <label className="label md:hidden">
+                    <span className="label-text">Title</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                    required
+                  />
+                </div>
               
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Description</span>
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="textarea textarea-bordered h-24"
-                />
-              </div>
+                <label className="self-start font-medium text-right mt-2 hidden md:block">Description</label>
+                <div className="form-control w-full">
+                  <label className="label md:hidden">
+                    <span className="label-text">Description</span>
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="textarea textarea-bordered h-24 w-full"
+                  />
+                </div>
               
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Open Date</span>
-                </label>
-                <input
-                  type="date"
-                  name="openDate"
-                  value={formData.openDate}
-                  onChange={handleInputChange}
-                  className="input input-bordered"
-                />
-              </div>
-              
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Status</span>
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  className="select select-bordered"
-                >
-                  <option value={MatterStatus.Open}>Open</option>
-                  <option value={MatterStatus.InProgress}>In Progress</option>
-                  <option value={MatterStatus.Closed}>Closed</option>
-                </select>
+                <label className="self-center font-medium text-right hidden md:block">Open Date</label>
+                <div className="form-control w-full">
+                  <label className="label md:hidden">
+                    <span className="label-text">Open Date</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="openDate"
+                    value={formData.openDate}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                
+                {/* Status field removed from creation form - all matters are created as Open */}
               </div>
               
               <div className="modal-action">
@@ -489,67 +487,73 @@ const Matters = () => {
       {/* Edit Matter Modal */}
       {isEditModalOpen && matterDetail && (
         <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Edit Matter</h3>
+          <div className="modal-box max-w-2xl">
+            <h3 className="font-bold text-lg mb-6">Edit Matter</h3>
             {isLoadingMatterDetail ? (
               <div className="flex justify-center items-center p-8">
                 <div className="loading loading-spinner loading-lg"></div>
               </div>
             ) : (
               <form onSubmit={handleUpdateMatter}>
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Title</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={updateFormData.title}
-                    onChange={handleUpdateInputChange}
-                    className="input input-bordered"
-                    required
-                  />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
+                  <label className="self-center font-medium text-right hidden md:block">Title</label>
+                  <div className="form-control w-full">
+                    <label className="label md:hidden">
+                      <span className="label-text">Title</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={updateFormData.title}
+                      onChange={handleUpdateInputChange}
+                      className="input input-bordered w-full"
+                      required
+                    />
+                  </div>
                 
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Description</span>
-                  </label>
-                  <textarea
-                    name="description"
-                    value={updateFormData.description}
-                    onChange={handleUpdateInputChange}
-                    className="textarea textarea-bordered h-24"
-                  />
-                </div>
+                  <label className="self-start font-medium text-right mt-2 hidden md:block">Description</label>
+                  <div className="form-control w-full">
+                    <label className="label md:hidden">
+                      <span className="label-text">Description</span>
+                    </label>
+                    <textarea
+                      name="description"
+                      value={updateFormData.description}
+                      onChange={handleUpdateInputChange}
+                      className="textarea textarea-bordered h-24 w-full"
+                    />
+                  </div>
                 
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Open Date</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="openDate"
-                    value={updateFormData.openDate}
-                    onChange={handleUpdateInputChange}
-                    className="input input-bordered"
-                  />
-                </div>
+                  <label className="self-center font-medium text-right hidden md:block">Open Date</label>
+                  <div className="form-control w-full">
+                    <label className="label md:hidden">
+                      <span className="label-text">Open Date</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="openDate"
+                      value={updateFormData.openDate}
+                      onChange={handleUpdateInputChange}
+                      className="input input-bordered w-full"
+                    />
+                  </div>
                 
-                <div className="form-control mb-4">
-                  <label className="label">
-                    <span className="label-text">Status</span>
-                  </label>
-                  <select
-                    name="status"
-                    value={updateFormData.status}
-                    onChange={handleUpdateInputChange}
-                    className="select select-bordered"
-                  >
-                    <option value={MatterStatus.Open}>Open</option>
-                    <option value={MatterStatus.InProgress}>In Progress</option>
-                    <option value={MatterStatus.Closed}>Closed</option>
-                  </select>
+                  <label className="self-center font-medium text-right hidden md:block">Status</label>
+                  <div className="form-control w-full">
+                    <label className="label md:hidden">
+                      <span className="label-text">Status</span>
+                    </label>
+                    <select
+                      name="status"
+                      value={updateFormData.status}
+                      onChange={handleUpdateInputChange}
+                      className="select select-bordered w-full"
+                    >
+                      <option value={MatterStatus.Open}>Open</option>
+                      <option value={MatterStatus.InProgress}>In Progress</option>
+                      <option value={MatterStatus.Closed}>Closed</option>
+                    </select>
+                  </div>
                 </div>
                 
                 <div className="modal-action">

@@ -326,9 +326,6 @@ public record MatterCreateRequest
     [StringLength(500)]
     public string? Description { get; set; }
 
-    public DateTime? OpenDate { get; set; }
-
-    public MatterStatus? Status { get; set; }
 }
 
 public record MatterUpdateRequest
