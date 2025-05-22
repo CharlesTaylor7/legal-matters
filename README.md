@@ -12,6 +12,8 @@ To build and run the application locally, a `docker-compose.yml` file is provide
 Run the following command:
 
 ```
+# The example environment will out of the box with docker compose  
+cp .env.example .env
 docker compose up --build
 ```
 
@@ -25,13 +27,25 @@ However, this approach does not support live reloading. For live reload, see the
 
 ## Developing with Live Reload
 
-### 1. PostgreSQL 
+### 1. Environment Variables
+
+Before starting, copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your own secrets as needed.
+
+
+### 2. PostgreSQL 
 
 ```bash
 docker compose up db -d
 ```
+(Or run postgres locally, and update NPGSQL_CONNECTION in .env)
 
-### 2. React dev server
+### 3. React dev server
 
 ```
 cd frontend
@@ -41,7 +55,7 @@ npm run dev
 
 If successful, the frontend will be served at http://localhost:3000
 
-### 3. .NET dev server
+### 4. .NET dev server
 
 ```
 cd backend

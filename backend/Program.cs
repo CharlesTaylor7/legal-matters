@@ -60,9 +60,11 @@ WebApplicationBuilder Configure()
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     });
 
+    var connection = Environment.GetEnvironmentVariable("NPGSQL_CONNECTION");
+    Console.WriteLine(connection);
     // Configure PostgreSQL with Entity Framework Core
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(Environment.GetEnvironmentVariable("NPGSQL_CONNECTION"))
+        options.UseNpgsql(connection)
     );
 
     // Register repositories
