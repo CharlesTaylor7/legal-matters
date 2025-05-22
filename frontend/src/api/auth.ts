@@ -6,6 +6,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import type { SuccessResponse } from "./types";
 
 export interface User {
   id: number;
@@ -13,30 +15,16 @@ export interface User {
   firmName: string;
 }
 
-export interface SuccessResponse {
-  message: string;
-}
-
-export interface ErrorResponse {
-  message: string;
-}
-
 export interface LoginRequest {
   email: string;
   password: string;
 }
-
-// Alias for backward compatibility
-export type LoginCredentials = LoginRequest;
 
 export interface SignupRequest {
   email: string;
   password: string;
   firmName: string;
 }
-
-// Alias for backward compatibility
-export type SignupCredentials = SignupRequest;
 
 /**
  * Custom hook to fetch the current authenticated user
@@ -45,18 +33,17 @@ export type SignupCredentials = SignupRequest;
 export const useAuthQuery = (): UseQueryResult<User | null> => {
   return useQuery({
     queryKey: ["auth", "me"],
-    queryFn: async () => {
-      const response = await fetch("/api/auth/me");
-
-      if (!response.ok) {
-        if (response.status === 401) {
+    queryFn: async ({ signal }) => {
+      try {
+        const response = await axios.get<User>("/api/auth/me", { signal });
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           // Not authenticated, but not an error
           return null;
         }
-        throw new Error("Failed to fetch user data");
+        throw error;
       }
-
-      return response.json() as Promise<User>;
     },
   });
 };
@@ -75,32 +62,13 @@ export const useLoginMutation = (): UseMutationResult<
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async (credentials: LoginCredentials) => {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      // Get the success response but we don't need to return it
-      (await response.json()) as SuccessResponse;
-
+    mutationFn: async (credentials: LoginRequest) => {
+      // Login and get success response
+      await axios.post<SuccessResponse>("/api/auth/login", credentials);
+      
       // Fetch the user data after successful login
-      const userResponse = await fetch("/api/auth/me");
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch user data after login");
-      }
-
-      return userResponse.json() as Promise<User>;
+      const userResponse = await axios.get<User>("/api/auth/me");
+      return userResponse.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch auth query to update UI
@@ -127,48 +95,19 @@ export const useSignupMutation = (): UseMutationResult<
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async (credentials: SignupCredentials) => {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Signup failed");
-      }
-
-      // Get the success response but we don't need to return it
-      (await response.json()) as SuccessResponse;
+    mutationFn: async (credentials: SignupRequest) => {
+      // Signup
+      await axios.post<SuccessResponse>("/api/auth/signup", credentials);
 
       // Login after successful signup
-      const loginResponse = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password,
-        }),
+      await axios.post<SuccessResponse>("/api/auth/login", {
+        email: credentials.email,
+        password: credentials.password,
       });
 
-      if (!loginResponse.ok) {
-        throw new Error("Failed to login after signup");
-      }
-
       // Fetch the user data after successful login
-      const userResponse = await fetch("/api/auth/me");
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch user data after signup");
-      }
-
-      return userResponse.json() as Promise<User>;
+      const userResponse = await axios.get<User>("/api/auth/me");
+      return userResponse.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch auth query to update UI
@@ -197,19 +136,7 @@ export const useLogoutMutation = (): UseMutationResult<
 
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Logout failed");
-      }
-
-      // We don't need to return the success response
-      (await response.json()) as SuccessResponse;
+      await axios.post<SuccessResponse>("/api/auth/logout");
     },
     onSuccess: () => {
       // Invalidate the auth query to trigger a refetch
