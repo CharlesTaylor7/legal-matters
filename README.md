@@ -80,3 +80,4 @@ All pull requests to main require tests to pass before merging.
 - pagination for frontend
 - searching
 - filtering
+- rewrite RBAC policies as declarative attributes. The server still does some basic RBAC via inline database queries.

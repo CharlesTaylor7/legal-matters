@@ -99,8 +99,7 @@ export default function MattersDashboard() {
             </option>
             {customers.map((customer) => (
               <option key={customer.id} value={customer.id}>
-                {customer.name} ({customer.openMattersCount}{" "}
-                {customer.openMattersCount === 1 ? "Matter" : "Matters"})
+                {customer.name}
               </option>
             ))}
           </select>

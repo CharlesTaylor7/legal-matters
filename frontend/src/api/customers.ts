@@ -13,7 +13,6 @@ export interface CustomerResponse {
   name: string;
   phone: string;
   lawyerId: number;
-  openMattersCount: number;
 }
 export interface Matter {
   id: number;

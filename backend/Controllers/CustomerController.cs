@@ -54,11 +54,6 @@ public class CustomerController : ControllerBase
 
         // Get status open, counts for each customer
         var customerIds = customers.Select(c => c.Id).ToList();
-        var matterCounts = await _context
-            .Matters.Where(m => customerIds.Contains(m.CustomerId) && m.Status == MatterStatus.Open)
-            .GroupBy(m => m.CustomerId)
-            .Select(g => new { CustomerId = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.CustomerId, x => x.Count);
 
         var response = customers
             .Select(c => new CustomerResponse
@@ -67,7 +62,6 @@ public class CustomerController : ControllerBase
                 Name = c.Name,
                 Phone = _phoneNumberService.FormatPhoneNumber(c.Phone),
                 LawyerId = c.LawyerId,
-                OpenMattersCount = matterCounts.ContainsKey(c.Id) ? matterCounts[c.Id] : 0,
             })
             .ToList();
 
@@ -154,10 +148,6 @@ public class CustomerController : ControllerBase
             );
         }
 
-        // Get count of open matters for this customer
-        var openMattersCount = await _context.Matters.CountAsync(m =>
-            m.CustomerId == customerId && m.Status == MatterStatus.Open
-        );
 
         var response = new CustomerResponse
         {
@@ -165,7 +155,6 @@ public class CustomerController : ControllerBase
             Name = customer.Name,
             Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
-            OpenMattersCount = openMattersCount,
         };
 
         return Ok(response);
@@ -303,5 +292,4 @@ public record CustomerResponse
     public required string Name { get; set; }
     public required string Phone { get; set; }
     public int LawyerId { get; set; }
-    public int OpenMattersCount { get; set; }
 }

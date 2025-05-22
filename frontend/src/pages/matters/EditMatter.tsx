@@ -49,7 +49,7 @@ export default function EditMatter() {
   const handleUpdateInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setUpdateFormData((prev) => ({
@@ -73,7 +73,7 @@ export default function EditMatter() {
         onSuccess: () => {
           navigate(`/matters/${customerIdNum}`);
         },
-      },
+      }
     );
   };
 
@@ -86,10 +86,7 @@ export default function EditMatter() {
             <div className="loading loading-spinner loading-lg"></div>
           </div>
         </div>
-        <div
-          className="modal-backdrop"
-          onClick={() => navigate(`/matters/${customerIdNum}`)}
-        ></div>
+        <ModalBackdrop customerId={customerIdNum} />
       </div>
     );
   }
@@ -110,10 +107,7 @@ export default function EditMatter() {
             </button>
           </div>
         </div>
-        <div
-          className="modal-backdrop"
-          onClick={() => navigate(`/matters/${customerIdNum}`)}
-        ></div>
+        <ModalBackdrop customerId={customerIdNum} />
       </div>
     );
   }
@@ -202,10 +196,16 @@ export default function EditMatter() {
           </div>
         </form>
       </div>
-      <div
-        className="modal-backdrop"
-        onClick={() => navigate("/matters")}
-      ></div>
+      <ModalBackdrop customerId={customerIdNum} />
     </div>
+  );
+}
+function ModalBackdrop({ customerId }: { customerId: number }) {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="modal-backdrop"
+      onClick={() => navigate(`/matters/${customerId}`)}
+    ></div>
   );
 }
