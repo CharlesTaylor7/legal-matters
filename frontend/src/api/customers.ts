@@ -41,12 +41,15 @@ export const useCustomersQuery = (): UseQueryResult<
 > => {
   return useQuery({
     queryKey: ["customers"],
-    queryFn: async ({ signal }) => {
-      const response = await axios.get<CustomerResponse[]>("/api/customers", {
-        signal,
-      });
-      return response.data;
-    },
+    queryFn: ({ signal }) =>
+      axios
+        .get<CustomerResponse[]>("/api/customers", {
+          signal,
+          metadata: {
+            action: "Fetching Customers",
+          },
+        })
+        .then((res) => res.data),
   });
 };
 
@@ -60,13 +63,15 @@ export const useCustomerQuery = (
 ): UseQueryResult<CustomerResponse, Error> => {
   return useQuery({
     queryKey: ["customers", id],
-    queryFn: async ({ signal }) => {
-      const response = await axios.get<CustomerResponse>(
-        `/api/customers/${id}`,
-        { signal },
-      );
-      return response.data;
-    },
+    queryFn: ({ signal }) =>
+      axios
+        .get<CustomerResponse>(`/api/customers/${id}`, {
+          signal,
+          metadata: {
+            action: "Fetching Customer",
+          },
+        })
+        .then((res) => res.data),
     enabled: !!id, // Only run the query if id is provided
   });
 };
@@ -84,13 +89,14 @@ export const useCreateCustomerMutation = (): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (customerData: CustomerCreateRequest) => {
-      const response = await axios.post<CustomerResponse>(
-        "/api/customers",
-        customerData,
-      );
-      return response.data;
-    },
+    mutationFn: (customerData: CustomerCreateRequest) =>
+      axios
+        .post<CustomerResponse>("/api/customers", customerData, {
+          metadata: {
+            action: "Creating Customer",
+          },
+        })
+        .then((res) => res.data),
     onSuccess: () => {
       // Invalidate customers query to refetch the list
       queryClient.invalidateQueries({ queryKey: ["customers"] });
@@ -121,6 +127,11 @@ export const useUpdateCustomerMutation = (): UseMutationResult<
       const response = await axios.put<CustomerResponse>(
         `/api/customers/${id}`,
         data,
+        {
+          metadata: {
+            action: "Updating Customer",
+          },
+        },
       );
       return response.data;
     },
@@ -145,12 +156,14 @@ export const useDeleteCustomerMutation = (): UseMutationResult<
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axios.delete<SuccessResponse>(
-        `/api/customers/${id}`,
-      );
-      return response.data;
-    },
+    mutationFn: (id: number) =>
+      axios
+        .delete<SuccessResponse>(`/api/customers/${id}`, void null, {
+          metadata: {
+            action: "Deleting Customer",
+          },
+        })
+        .then((res) => res.data),
     onSuccess: (_, id) => {
       // Invalidate customers query to refetch the list
       queryClient.invalidateQueries({ queryKey: ["customers"] });
