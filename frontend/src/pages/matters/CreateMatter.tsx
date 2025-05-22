@@ -42,7 +42,7 @@ export default function CreateMatter() {
           // Navigate back to the customer's matters list
           navigate(`/matters/${customerIdNum}`);
         },
-      },
+      }
     );
   };
 
@@ -50,7 +50,7 @@ export default function CreateMatter() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
