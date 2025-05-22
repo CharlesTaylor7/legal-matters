@@ -124,8 +124,8 @@ public class MattersController : ControllerBase
         {
             Title = request.Title,
             Description = request.Description,
-            OpenDate = request.OpenDate ?? DateTime.UtcNow,
-            Status = request.Status ?? MatterStatus.Open,
+            OpenDate = DateTime.UtcNow,
+            Status = MatterStatus.Open,
             CustomerId = customerId,
             Customer = customer,
         };
@@ -325,7 +325,6 @@ public record MatterCreateRequest
 
     [StringLength(500)]
     public string? Description { get; set; }
-
 }
 
 public record MatterUpdateRequest
