@@ -8,13 +8,9 @@ import {
 import { type ErrorResponse } from "./types";
 
 /**
- * Matter status enum matching the backend MatterStatus enum
+ * Matter status type matching the backend MatterStatus enum values
  */
-export enum MatterStatus {
-  Open = 0,
-  InProgress = 1,
-  Closed = 2,
-}
+export type MatterStatus = "Open" | "Closed" | "OnHold";
 
 /**
  * Interface for matter response from the API

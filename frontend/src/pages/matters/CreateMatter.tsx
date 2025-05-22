@@ -17,7 +17,7 @@ export default function CreateMatter() {
     description: "",
     openDate: new Date().toISOString().split("T")[0],
     // Always set status to Open for new matters
-    status: MatterStatus.Open,
+    status: "Open",
   });
 
   const createMatterMutation = useCreateMatterMutation();
@@ -32,7 +32,7 @@ export default function CreateMatter() {
     // Ensure status is always Open for new matters
     const dataWithOpenStatus = {
       ...formData,
-      status: MatterStatus.Open,
+      status: "Open",
     };
 
     createMatterMutation.mutate(

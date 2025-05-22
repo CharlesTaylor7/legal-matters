@@ -40,24 +40,24 @@ export default function Matters() {
   const renderStatusBadge = (status: MatterStatus) => {
     let badgeClass = "badge";
     switch (status) {
-      case MatterStatus.Open:
+      case "Open":
         badgeClass += " badge-primary";
         break;
-      case MatterStatus.InProgress:
+      case "OnHold":
         badgeClass += " badge-warning";
         break;
-      case MatterStatus.Closed:
+      case "Closed":
         badgeClass += " badge-success";
         break;
     }
 
     const statusText = (() => {
       switch (status) {
-        case MatterStatus.Open:
+        case "Open":
           return "Open";
-        case MatterStatus.InProgress:
-          return "In Progress";
-        case MatterStatus.Closed:
+        case "OnHold":
+          return "On Hold";
+        case "Closed":
           return "Closed";
         default:
           return "Unknown";

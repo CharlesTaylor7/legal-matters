@@ -22,7 +22,7 @@ export default function EditMatter() {
     title: "",
     description: "",
     openDate: new Date().toISOString().split("T")[0],
-    status: MatterStatus.Open,
+    status: "Open",
   });
 
   // Fetch matter details
@@ -189,9 +189,9 @@ export default function EditMatter() {
                 onChange={handleUpdateInputChange}
                 className="select select-bordered w-full"
               >
-                <option value={MatterStatus.Open}>Open</option>
-                <option value={MatterStatus.InProgress}>In Progress</option>
-                <option value={MatterStatus.Closed}>Closed</option>
+                <option value="Open">Open</option>
+                <option value="OnHold">On Hold</option>
+                <option value="Closed">Closed</option>
               </select>
             </div>
           </div>
