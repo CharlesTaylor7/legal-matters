@@ -6,7 +6,6 @@ import {
   type MatterUpdateRequest,
   MatterStatus,
 } from "../../api/matters";
-import { format } from "date-fns";
 
 export default function EditMatter() {
   const navigate = useNavigate();
@@ -79,20 +78,6 @@ export default function EditMatter() {
         },
       },
     );
-  };
-
-  // Format status for display
-  const formatStatus = (status: MatterStatus): string => {
-    switch (status) {
-      case MatterStatus.Open:
-        return "Open";
-      case MatterStatus.InProgress:
-        return "In Progress";
-      case MatterStatus.Closed:
-        return "Closed";
-      default:
-        return "Unknown";
-    }
   };
 
   // If loading, show spinner

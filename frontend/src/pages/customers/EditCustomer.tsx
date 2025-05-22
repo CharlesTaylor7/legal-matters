@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router";
 import {
   useCustomerQuery,
   useUpdateCustomerMutation,
-  type Customer,
   type CustomerUpdateRequest,
 } from "../../api/customers";
 

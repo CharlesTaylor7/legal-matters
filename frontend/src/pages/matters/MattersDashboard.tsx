@@ -21,14 +21,16 @@ export default function MattersDashboard() {
       navigate(`/matters/${selectedCustomerId}`);
     }
   };
-  
+
   // If a customer is selected in the URL but not in the dropdown, update the dropdown
   useEffect(() => {
     if (activeCustomerId && customers.length > 0) {
-      const customerExists = customers.some(c => c.id.toString() === activeCustomerId);
+      const customerExists = customers.some(
+        (c) => c.id.toString() === activeCustomerId,
+      );
       if (!customerExists) {
         // If customer doesn't exist, reset to the dashboard
-        navigate('/matters');
+        navigate("/matters");
       }
     }
   }, [activeCustomerId, customers, navigate]);
@@ -97,7 +99,8 @@ export default function MattersDashboard() {
             </option>
             {customers.map((customer) => (
               <option key={customer.id} value={customer.id}>
-                {customer.name} ({customer.openMattersCount} {customer.openMattersCount === 1 ? "Matter" : "Matters"})
+                {customer.name} ({customer.openMattersCount}{" "}
+                {customer.openMattersCount === 1 ? "Matter" : "Matters"})
               </option>
             ))}
           </select>
