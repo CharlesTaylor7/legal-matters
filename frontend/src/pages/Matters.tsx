@@ -37,10 +37,7 @@ export default function Matters() {
     setSelectedCustomerId(customerId || null);
   };
 
-  // Navigate to view matter page
-  const handleViewMatter = (customerId: number, matterId: number) => {
-    navigate(`view/${customerId}/${matterId}`);
-  };
+
 
   // Navigate to edit matter page
   const handleEditMatter = (customerId: number, matterId: number) => {
@@ -114,56 +111,56 @@ export default function Matters() {
           </button>
         </div>
 
-        {/* Error Messages */}
-        {customersError && (
-          <div className="alert alert-error mb-4">
-            <div className="flex-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 mx-2 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                ></path>
-              </svg>
-              <label>Error loading customers: {customersError.message}</label>
-            </div>
+      {/* Error Messages */}
+      {customersError && (
+        <div className="alert alert-error mb-4">
+          <div className="flex-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="w-6 h-6 mx-2 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              ></path>
+            </svg>
+            <label>Error loading customers: {customersError.message}</label>
           </div>
-        )}
+        </div>
+      )}
 
-        {mattersError && (
-          <div className="alert alert-error mb-4">
-            <div className="flex-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 mx-2 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                ></path>
-              </svg>
-              <label>Error loading matters: {mattersError.message}</label>
-            </div>
+      {mattersError && (
+        <div className="alert alert-error mb-4">
+          <div className="flex-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="w-6 h-6 mx-2 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              ></path>
+            </svg>
+            <label>Error loading matters: {mattersError.message}</label>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Loading States */}
-        {isLoadingCustomers && (
-          <div className="loading loading-spinner loading-lg mx-auto my-8"></div>
-        )}
+      {/* Loading States */}
+      {isLoadingCustomers && (
+        <div className="loading loading-spinner loading-lg mx-auto my-8"></div>
+      )}
 
-        {/* Matters table */}
-        <div className="overflow-x-auto">
+      {/* Matters table */}
+      <div className="overflow-x-auto">
           <table className="table table-zebra w-full">
             <thead>
               <tr>
@@ -193,14 +190,6 @@ export default function Matters() {
                     <td>
                       <div className="flex gap-2 flex-wrap">
                         <button
-                          className="btn btn-sm btn-primary"
-                          onClick={() =>
-                            handleViewMatter(matter.customerId, matter.id)
-                          }
-                        >
-                          View
-                        </button>
-                        <button
                           className="btn btn-sm btn-accent"
                           onClick={() =>
                             handleEditMatter(matter.customerId, matter.id)
@@ -225,27 +214,27 @@ export default function Matters() {
           </table>
         </div>
 
-        {/* Outlet for modal routes */}
-        <Outlet />
+      {/* Outlet for modal routes */}
+      <Outlet />
 
-        {!selectedCustomerId && !isLoadingCustomers && (
-          <div className="alert alert-info mt-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="stroke-current shrink-0 w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Please select a customer to view their matters.</span>
-          </div>
-        )}
+      {!selectedCustomerId && !isLoadingCustomers && (
+        <div className="alert alert-info mt-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="stroke-current shrink-0 w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Please select a customer to view their matters.</span>
+        </div>
+      )}
       </div>
     </div>
   );

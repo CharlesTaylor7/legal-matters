@@ -78,13 +78,7 @@ export const router = createBrowserRouter([
               title: "Add New Matter",
             },
           },
-          {
-            path: "view/:customerId/:matterId",
-            element: <ViewMatter />,
-            handle: {
-              title: "View Matter",
-            },
-          },
+
           {
             path: "edit/:customerId/:matterId",
             element: <EditMatter />,
