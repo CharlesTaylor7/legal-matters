@@ -1,16 +1,10 @@
-## UI Tweaks
-- [ ] Banner stretches across the screen. Maybe shrink it down a bit?
-- logout button is not aligned to navigtation items
-- [ ] delete should be last
-
-
-
 ## Issues
-- [x] Modals are mutated with dom manip
-- [x] deletew button uses window confirm instead of modal
-- [ ] Remove ids from table viewsG
+- [ ] status's are inconsistent between front and  backend 
 - [ ] error handling is not up to snuff and revise client side handling
 
+## UI Tweaks
+- [ ] empty Banner stretches across the screen. Maybe shrink it down a bit?
+- [ ] logout button is not aligned to navigtation items
 
 
 ## nice to have
