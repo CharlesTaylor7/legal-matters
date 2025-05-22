@@ -38,7 +38,12 @@ export const useAuthQuery = (): UseQueryResult<User | null> => {
     queryKey: ["auth", "me"],
     queryFn: async ({ signal }) => {
       try {
-        const response = await axios.get<User>("/api/auth/me", { signal });
+        const response = await axios.get<User>("/api/auth/me", {
+          signal,
+          metadata: {
+            action: "Get User Info",
+          },
+        });
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -56,7 +61,7 @@ export const useAuthQuery = (): UseQueryResult<User | null> => {
  * @returns UseMutationResult for login
  */
 export const useLoginMutation = (): UseMutationResult<
-  User,
+  SuccessResponse,
   Error,
   LoginRequest,
   unknown
@@ -65,14 +70,13 @@ export const useLoginMutation = (): UseMutationResult<
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async (credentials: LoginRequest) => {
+    mutationFn: (credentials: LoginRequest) =>
       // Login and get success response
-      await axios.post<SuccessResponse>("/api/auth/login", credentials);
-
-      // Fetch the user data after successful login
-      const userResponse = await axios.get<User>("/api/auth/me");
-      return userResponse.data;
-    },
+      axios
+        .post<SuccessResponse>("/api/auth/login", credentials, {
+          metadata: { action: "Login" },
+        })
+        .then((res) => res.data),
     onSuccess: (data) => {
       // Invalidate and refetch auth query to update UI
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
@@ -89,7 +93,7 @@ export const useLoginMutation = (): UseMutationResult<
  * @returns UseMutationResult for signup
  */
 export const useSignupMutation = (): UseMutationResult<
-  User,
+  SuccessResponse,
   Error,
   SignupRequest,
   unknown
@@ -98,20 +102,14 @@ export const useSignupMutation = (): UseMutationResult<
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async (credentials: SignupRequest) => {
-      // Signup
-      await axios.post<SuccessResponse>("/api/auth/signup", credentials);
-
-      // Login after successful signup
-      await axios.post<SuccessResponse>("/api/auth/login", {
-        email: credentials.email,
-        password: credentials.password,
-      });
-
-      // Fetch the user data after successful login
-      const userResponse = await axios.get<User>("/api/auth/me");
-      return userResponse.data;
-    },
+    mutationFn: (credentials: SignupRequest) =>
+      axios
+        .post<SuccessResponse>("/api/auth/signup", credentials, {
+          metadata: {
+            action: "Signing up",
+          },
+        })
+        .then((res) => res.data),
     onSuccess: (data) => {
       // Invalidate and refetch auth query to update UI
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
@@ -129,7 +127,7 @@ export const useSignupMutation = (): UseMutationResult<
  * @returns UseMutationResult for logout
  */
 export const useLogoutMutation = (): UseMutationResult<
-  void,
+  SuccessResponse,
   Error,
   void,
   unknown
@@ -138,9 +136,14 @@ export const useLogoutMutation = (): UseMutationResult<
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async () => {
-      await axios.post<SuccessResponse>("/api/auth/logout");
-    },
+    mutationFn: () =>
+      axios
+        .post<SuccessResponse>("/api/auth/logout", void null, {
+          metadata: {
+            action: "Logging out",
+          },
+        })
+        .then((res) => res.data),
     onSuccess: () => {
       // Invalidate the auth query to trigger a refetch
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });

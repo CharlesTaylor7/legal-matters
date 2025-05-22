@@ -8,11 +8,8 @@ export default function MattersDashboard() {
   const { customerId: activeCustomerId } = useParams<{ customerId?: string }>();
 
   // Fetch all customers (now with open matters count)
-  const {
-    data: customers = [],
-    isLoading: isLoadingCustomers,
-    error: customersError,
-  } = useCustomersQuery();
+  const { data: customers = [], isLoading: isLoadingCustomers } =
+    useCustomersQuery();
 
   // Handle customer selection change
   const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -22,50 +19,8 @@ export default function MattersDashboard() {
     }
   };
 
-  // If a customer is selected in the URL but not in the dropdown, update the dropdown
-  useEffect(() => {
-    if (activeCustomerId && customers.length > 0) {
-      const customerExists = customers.some(
-        (c) => c.id.toString() === activeCustomerId,
-      );
-      if (!customerExists) {
-        // If customer doesn't exist, reset to the dashboard
-        navigate("/matters");
-      }
-    }
-  }, [activeCustomerId, customers, navigate]);
-
   if (isLoadingCustomers) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="flex justify-center my-6">
-          <div className="loading loading-spinner loading-md"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (customersError) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="alert alert-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="w-6 h-6 mx-2 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-            ></path>
-          </svg>
-          <span>Error loading customers: {customersError.message}</span>
-        </div>
-      </div>
-    );
+    return <div className="spinner"></div>;
   }
 
   return (

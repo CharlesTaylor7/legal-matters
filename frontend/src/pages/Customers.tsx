@@ -5,12 +5,7 @@ export default function Customers() {
   const navigate = useNavigate();
 
   // Fetch customers using the custom hook
-  const {
-    data: customers = [],
-    isLoading,
-    isError,
-    error,
-  } = useCustomersQuery();
+  const { data: customers = [], isLoading, isError } = useCustomersQuery();
 
   // Navigate to edit customer page
   const handleEdit = (customer: CustomerResponse) => {
@@ -31,15 +26,7 @@ export default function Customers() {
         </button>
       </div>
 
-      {isLoading && (
-        <div className="alert alert-info">Loading customers...</div>
-      )}
-
-      {isError && (
-        <div className="alert alert-error">
-          Error loading customers: {error?.message || "Unknown error"}
-        </div>
-      )}
+      {isLoading && <div className="spinner" />}
 
       {!isLoading && !isError && customers.length === 0 && (
         <div className="alert alert-info">
