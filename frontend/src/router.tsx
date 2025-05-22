@@ -74,7 +74,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: ":customerId",
-            element: <MattersByCustomer />,
+            element: <Matters />,
             handle: {
               title: "Customer Matters",
             },
