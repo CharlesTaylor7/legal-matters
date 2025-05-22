@@ -51,7 +51,7 @@ dotnet tool restore
 dotnet ef database update
 
 # Run server
-dotnet watch run
+dotnet watch run --non-interactive
 ```
 
 If successful, the backend will be available at http://localhost:5000

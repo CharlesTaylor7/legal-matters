@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace LegalMatters.Models;
 
@@ -33,9 +35,15 @@ public class Matter
     public Customer? Customer { get; set; }
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MatterStatus
 {
+    [EnumMember(Value = "Open")]
     Open,
+
+    [EnumMember(Value = "Closed")]
     Closed,
+
+    [EnumMember(Value = "OnHold")]
     OnHold,
 }

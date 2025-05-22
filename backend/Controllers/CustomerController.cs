@@ -163,7 +163,7 @@ public class CustomerController : ControllerBase
                         Id = m.Id,
                         Title = m.Title,
                         Description = m.Description,
-                        CustomerId = m.CustomerId,
+                        Status = m.Status,
                     })
                     .ToList() ?? new List<MatterResponse>(),
         };

@@ -1,6 +1,6 @@
 # Legal Matters API
 
-This is the backend API for the TODO
+This is the REST API Server for the Legal Matters application.
 
 
 ## Migrations management
@@ -31,7 +31,7 @@ To run the application, use the following command:
 
 ```bash
 docker compose up db migrate -d
-dotnet watch run
+dotnet watch run --non-interactive
 ```
 
 The API will be available at http://localhost:5000

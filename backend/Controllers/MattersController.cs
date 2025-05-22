@@ -68,7 +68,6 @@ public class MattersController : ControllerBase
                 Description = m.Description,
                 OpenDate = m.OpenDate,
                 Status = m.Status,
-                CustomerId = m.CustomerId,
             })
             .ToList();
 
@@ -140,7 +139,6 @@ public class MattersController : ControllerBase
             Description = matter.Description,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
-            CustomerId = matter.CustomerId,
         };
 
         return CreatedAtAction(
@@ -157,11 +155,11 @@ public class MattersController : ControllerBase
     /// <param name="matterId">ID of the matter</param>
     /// <returns>Matter details</returns>
     [HttpGet("{matterId}")]
-    [ProducesResponseType(typeof(MatterDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MatterResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<MatterDetailResponse>> GetMatter(int customerId, int matterId)
+    public async Task<ActionResult<MatterResponse>> GetMatter(int customerId, int matterId)
     {
         // Validate permissions first
         var user = await _userManager.GetUserAsync(User);
@@ -194,15 +192,13 @@ public class MattersController : ControllerBase
             return NotFound(new ErrorResponse { Message = "Matter not found" });
         }
 
-        var response = new MatterDetailResponse
+        var response = new MatterResponse
         {
             Id = matter.Id,
             Title = matter.Title,
             Description = matter.Description,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
-            CustomerId = matter.CustomerId,
-            CustomerName = customer.Name,
         };
 
         return Ok(response);
@@ -305,7 +301,6 @@ public class MattersController : ControllerBase
             Description = matter.Description,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
-            CustomerId = matter.CustomerId,
         };
 
         return Ok(response);
@@ -348,6 +343,5 @@ public record MatterResponse
     public required string Title { get; set; }
     public string? Description { get; set; }
     public DateTime OpenDate { get; set; }
-    public required string Status { get; set; }
+    public required MatterStatus Status { get; set; }
 }
-
