@@ -12,7 +12,6 @@ import DeleteCustomer from "./pages/customers/DeleteCustomer";
 import CreateMatter from "./pages/matters/CreateMatter";
 import EditMatter from "./pages/matters/EditMatter";
 import MattersDashboard from "./pages/matters/MattersDashboard";
-import MattersByCustomer from "./pages/matters/MattersByCustomer";
 
 // Create the router
 export const router = createBrowserRouter([

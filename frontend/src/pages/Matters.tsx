@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router";
-import { useCustomersQuery } from "../api/customers";
+import { useCustomerQuery } from "../api/customers";
 import {
   useMattersQuery,
   MatterStatus,
@@ -9,60 +9,40 @@ import {
 
 export default function Matters() {
   const navigate = useNavigate();
-  const { customerId } = useParams<{ customerId?: string }>();
-  
-  // State for customer selection
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
-    customerId ? Number(customerId) : null
-  );
-  
-  // Update URL when customer changes
-  useEffect(() => {
-    if (customerId && Number(customerId) !== selectedCustomerId) {
-      setSelectedCustomerId(Number(customerId));
-    }
-  }, [customerId]);
+  const { customerId } = useParams<{ customerId: string }>();
+  const customerIdNum = Number(customerId);
 
-  // Fetch customers
+  // Fetch customer details
   const {
-    data: customers = [],
-    isLoading: isLoadingCustomers,
-    error: customersError,
-  } = useCustomersQuery();
+    data: customer,
+    isLoading: isLoadingCustomer,
+    error: customerError,
+  } = useCustomerQuery(customerIdNum);
 
-  // Fetch matters for selected customer
+  // Fetch matters for this customer
   const {
     data: matters = [],
     isLoading: isLoadingMatters,
     error: mattersError,
-  } = useMattersQuery(selectedCustomerId ?? 0);
+  } = useMattersQuery(customerIdNum);
 
 
 
-  // Handle customer selection
-  const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newCustomerId = Number(e.target.value);
-    setSelectedCustomerId(newCustomerId || null);
-    
-    // Update URL to reflect the selected customer
-    if (newCustomerId) {
-      navigate(`/matters/${newCustomerId}`);
-    } else {
-      navigate('/matters');
-    }
+  // Navigate back to matters dashboard
+  const handleBackToDashboard = () => {
+    navigate('/matters');
+  };
+  
+  // Navigate to create matter page
+  const handleCreateMatter = () => {
+    navigate(`create`);
   };
 
 
 
   // Navigate to edit matter page
-  const handleEditMatter = (customerId: number, matterId: number) => {
-    navigate(`edit/${customerId}/${matterId}`);
-  };
-
-  // Navigate to create matter page
-  const handleCreateMatter = () => {
-    if (!selectedCustomerId) return;
-    navigate(`create/${selectedCustomerId}`);
+  const handleEditMatter = (matterId: number) => {
+    navigate(`edit/${matterId}`);
   };
 
   // Render status badge with appropriate color
@@ -96,39 +76,22 @@ export default function Matters() {
     return <span className={badgeClass}>{statusText}</span>;
   };
 
-  return (
-    <div className="container mx-auto p-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold">Matters</h1>
-
-        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-          <div className="form-control w-full md:w-80">
-            <select
-              className="select select-bordered w-full"
-              value={selectedCustomerId || ""}
-              onChange={handleCustomerChange}
-            >
-              <option value="">Select a customer</option>
-              {customers?.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            className="btn btn-primary w-full md:w-auto"
-            onClick={handleCreateMatter}
-            disabled={!selectedCustomerId}
-          >
-            Add Matter
-          </button>
+  // If loading customer data, show loading indicator
+  if (isLoadingCustomer) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex justify-center my-6">
+          <div className="loading loading-spinner loading-lg"></div>
         </div>
+      </div>
+    );
+  }
 
-      {/* Error Messages */}
-      {customersError && (
-        <div className="alert alert-error mb-4">
+  // If error or customer not found, show error message
+  if (customerError || !customer) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="alert alert-error">
           <div className="flex-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -143,10 +106,39 @@ export default function Matters() {
                 d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
               ></path>
             </svg>
-            <label>Error loading customers: {customersError.message}</label>
+            <label>{customerError?.message || "Customer not found"}</label>
           </div>
         </div>
-      )}
+        <button
+          className="btn btn-primary mt-4"
+          onClick={handleBackToDashboard}
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <button
+            className="btn btn-sm btn-ghost mb-2"
+            onClick={handleBackToDashboard}
+          >
+            ← Back to Dashboard
+          </button>
+          <h2 className="text-2xl font-bold">{customer.name}'s Matters</h2>
+          <p className="text-sm opacity-70">{customer.phone}</p>
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={handleCreateMatter}
+        >
+          Add Matter
+        </button>
+      </div>
 
       {mattersError && (
         <div className="alert alert-error mb-4">
@@ -170,34 +162,25 @@ export default function Matters() {
       )}
 
       {/* Loading States */}
-      {isLoadingCustomers && (
-        <div className="loading loading-spinner loading-lg mx-auto my-8"></div>
-      )}
-
-      {/* Matters table */}
-      <div className="overflow-x-auto">
+      {isLoadingMatters ? (
+        <div className="loading loading-spinner loading-md mx-auto my-8"></div>
+      ) : (
+        // Matters table
+        <div className="overflow-x-auto">
           <table className="table table-zebra w-full">
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Customer</th>
                 <th>Status</th>
                 <th>Open Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {isLoadingMatters ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-4">
-                    <div className="loading loading-spinner loading-md mx-auto"></div>
-                  </td>
-                </tr>
-              ) : matters && matters.length > 0 ? (
+              {matters.length > 0 ? (
                 matters.map((matter) => (
                   <tr key={matter.id}>
                     <td>{matter.title}</td>
-                    <td>{matter.customerName}</td>
                     <td>{renderStatusBadge(matter.status)}</td>
                     <td>
                       {new Date(matter.openDate).toLocaleDateString()}
@@ -205,10 +188,8 @@ export default function Matters() {
                     <td>
                       <div className="flex gap-2 flex-wrap">
                         <button
-                          className="btn btn-sm btn-accent"
-                          onClick={() =>
-                            handleEditMatter(matter.customerId, matter.id)
-                          }
+                          className="btn btn-sm btn-outline btn-accent"
+                          onClick={() => handleEditMatter(matter.id)}
                         >
                           Edit
                         </button>
@@ -218,39 +199,17 @@ export default function Matters() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="text-center py-4">
-                    {selectedCustomerId
-                      ? "No matters found for this customer."
-                      : "Please select a customer to view their matters."}
+                  <td colSpan={4} className="text-center py-4">
+                    No matters found for this customer.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-
+      )}
       {/* Outlet for modal routes */}
       <Outlet />
-
-      {!selectedCustomerId && !isLoadingCustomers && (
-        <div className="alert alert-info mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="stroke-current shrink-0 w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span>Please select a customer to view their matters.</span>
-        </div>
-      )}
-      </div>
     </div>
   );
 }
