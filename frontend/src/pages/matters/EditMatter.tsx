@@ -56,7 +56,7 @@ export default function EditMatter() {
     const { name, value } = e.target;
     setUpdateFormData((prev) => ({
       ...prev,
-      [name]: name === "status" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
