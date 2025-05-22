@@ -48,7 +48,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run eslint
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint 
         run: npm run lint
 
         
