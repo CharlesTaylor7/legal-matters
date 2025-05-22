@@ -19,12 +19,7 @@ export default function EditCustomer() {
   });
 
   // Fetch customer data
-  const {
-    data: customer,
-    isLoading,
-    isError,
-    error,
-  } = useCustomerQuery(id);
+  const { data: customer, isLoading, isError, error } = useCustomerQuery(id);
 
   // Update mutation
   const updateCustomerMutation = useUpdateCustomerMutation();
@@ -42,7 +37,7 @@ export default function EditCustomer() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     updateCustomerMutation.mutate(
       {
         id,
@@ -53,7 +48,7 @@ export default function EditCustomer() {
           // Navigate back to customers list
           navigate("/customers");
         },
-      }
+      },
     );
   };
 
@@ -82,10 +77,7 @@ export default function EditCustomer() {
           <h3 className="font-bold text-lg text-error mb-4">Error</h3>
           <p>{error?.message || "Failed to load customer data"}</p>
           <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() => navigate("/customers")}
-            >
+            <button className="btn" onClick={() => navigate("/customers")}>
               Close
             </button>
           </div>

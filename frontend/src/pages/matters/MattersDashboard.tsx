@@ -4,12 +4,12 @@ import { useCustomersQuery } from "../../api/customers";
 
 export default function MattersDashboard() {
   const navigate = useNavigate();
-  
+
   // Fetch all customers (now with open matters count)
-  const { 
-    data: customers = [], 
+  const {
+    data: customers = [],
     isLoading: isLoadingCustomers,
-    error: customersError 
+    error: customersError,
   } = useCustomersQuery();
 
   // Handle customer card click
@@ -57,7 +57,7 @@ export default function MattersDashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Matters Dashboard</h1>
-      
+
       {customers.length === 0 ? (
         <div className="alert alert-info">
           <svg
@@ -78,29 +78,41 @@ export default function MattersDashboard() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {customers.map((customer) => (
-              <div 
-                key={customer.id}
-                className="card bg-base-100 shadow-md hover:shadow-lg cursor-pointer transition-shadow"
-                onClick={() => handleCustomerClick(customer.id)}
-              >
-                <div className="card-body">
+            <div
+              key={customer.id}
+              className="card bg-base-100 shadow-md transition-shadow"
+            >
+              <div className="card-body p-0">
+                {/* Matter count badge */}
+                <div className="">{customer.openMattersCount}</div>
+
+                <div className="p-5">
                   <h2 className="card-title">{customer.name}</h2>
                   <p className="text-sm opacity-70">{customer.phone}</p>
-                  
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="font-semibold">
-                      {customer.openMattersCount} {customer.openMattersCount === 1 ? "Open Matter" : "Open Matters"}
-                    </span>
-                    <button className="btn btn-sm btn-primary">
-                      View Details
+
+                  <div className="card-actions justify-end mt-4">
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => handleCustomerClick(customer.id)}
+                    >
+                      View Matters
                     </button>
                   </div>
                 </div>
+
+                {/* Footer with matters count */}
+                <div className="bg-base-200 px-5 py-2 text-sm">
+                  {customer.openMattersCount}{" "}
+                  {customer.openMattersCount === 1
+                    ? "Open Matter"
+                    : "Open Matters"}
+                </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       )}
-      
+
       {/* Outlet for nested routes */}
       <Outlet />
     </div>

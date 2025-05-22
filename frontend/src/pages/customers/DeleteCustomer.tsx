@@ -1,5 +1,8 @@
 import { useNavigate, useParams } from "react-router";
-import { useDeleteCustomerMutation, useCustomerQuery } from "../../api/customers";
+import {
+  useDeleteCustomerMutation,
+  useCustomerQuery,
+} from "../../api/customers";
 
 export default function DeleteCustomer() {
   const navigate = useNavigate();
@@ -8,7 +11,7 @@ export default function DeleteCustomer() {
 
   // Fetch customer data to display name in confirmation
   const { data: customer, isLoading, isError } = useCustomerQuery(id);
-  
+
   // Delete mutation
   const deleteCustomerMutation = useDeleteCustomerMutation();
 
@@ -45,10 +48,7 @@ export default function DeleteCustomer() {
           <h3 className="font-bold text-lg text-error mb-4">Error</h3>
           <p>Could not find customer information. Please try again.</p>
           <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() => navigate("/customers")}
-            >
+            <button className="btn" onClick={() => navigate("/customers")}>
               Close
             </button>
           </div>
@@ -65,17 +65,15 @@ export default function DeleteCustomer() {
     <div className="modal modal-open">
       <div className="modal-box max-w-md">
         <h3 className="font-bold text-lg mb-4">Confirm Delete</h3>
-        
+
         <p className="py-4">
-          Are you sure you want to delete customer <span className="font-semibold">{customer?.name}</span>?
+          Are you sure you want to delete customer{" "}
+          <span className="font-semibold">{customer?.name}</span>?
         </p>
         <p className="text-error mb-4">This action cannot be undone.</p>
-        
+
         <div className="modal-action">
-          <button
-            className="btn"
-            onClick={() => navigate("/customers")}
-          >
+          <button className="btn" onClick={() => navigate("/customers")}>
             Cancel
           </button>
           <button

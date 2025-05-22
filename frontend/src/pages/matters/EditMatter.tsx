@@ -14,7 +14,7 @@ export default function EditMatter() {
     customerId: string;
     matterId: string;
   }>();
-  
+
   const customerIdNum = Number(customerId);
   const matterIdNum = Number(matterId);
 
@@ -53,7 +53,7 @@ export default function EditMatter() {
   const handleUpdateInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateFormData((prev) => ({
@@ -77,7 +77,7 @@ export default function EditMatter() {
         onSuccess: () => {
           navigate(`/matters/${customerIdNum}`);
         },
-      }
+      },
     );
   };
 
@@ -205,9 +205,7 @@ export default function EditMatter() {
                 className="select select-bordered w-full"
               >
                 <option value={MatterStatus.Open}>Open</option>
-                <option value={MatterStatus.InProgress}>
-                  In Progress
-                </option>
+                <option value={MatterStatus.InProgress}>In Progress</option>
                 <option value={MatterStatus.Closed}>Closed</option>
               </select>
             </div>

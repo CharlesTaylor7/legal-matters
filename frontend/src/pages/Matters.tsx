@@ -1,11 +1,6 @@
-import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router";
 import { useCustomerQuery } from "../api/customers";
-import {
-  useMattersQuery,
-  MatterStatus,
-  type MatterResponse,
-} from "../api/matters";
+import { useMattersQuery, MatterStatus } from "../api/matters";
 
 export default function Matters() {
   const navigate = useNavigate();
@@ -26,19 +21,15 @@ export default function Matters() {
     error: mattersError,
   } = useMattersQuery(customerIdNum);
 
-
-
   // Navigate back to matters dashboard
   const handleBackToDashboard = () => {
-    navigate('/matters');
+    navigate("/matters");
   };
-  
+
   // Navigate to create matter page
   const handleCreateMatter = () => {
-    navigate(`create`);
+    navigate("create");
   };
-
-
 
   // Navigate to edit matter page
   const handleEditMatter = (matterId: number) => {
@@ -59,7 +50,7 @@ export default function Matters() {
         badgeClass += " badge-success";
         break;
     }
-    
+
     const statusText = (() => {
       switch (status) {
         case MatterStatus.Open:
@@ -72,7 +63,7 @@ export default function Matters() {
           return "Unknown";
       }
     })();
-    
+
     return <span className={badgeClass}>{statusText}</span>;
   };
 
@@ -123,19 +114,10 @@ export default function Matters() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <button
-            className="btn btn-sm btn-ghost mb-2"
-            onClick={handleBackToDashboard}
-          >
-            ← Back to Dashboard
-          </button>
           <h2 className="text-2xl font-bold">{customer.name}'s Matters</h2>
           <p className="text-sm opacity-70">{customer.phone}</p>
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={handleCreateMatter}
-        >
+        <button className="btn btn-primary" onClick={handleCreateMatter}>
           Add Matter
         </button>
       </div>
@@ -182,9 +164,7 @@ export default function Matters() {
                   <tr key={matter.id}>
                     <td>{matter.title}</td>
                     <td>{renderStatusBadge(matter.status)}</td>
-                    <td>
-                      {new Date(matter.openDate).toLocaleDateString()}
-                    </td>
+                    <td>{new Date(matter.openDate).toLocaleDateString()}</td>
                     <td>
                       <div className="flex gap-2 flex-wrap">
                         <button

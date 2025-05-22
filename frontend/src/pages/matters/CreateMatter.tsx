@@ -10,7 +10,7 @@ export default function CreateMatter() {
   const navigate = useNavigate();
   const { customerId } = useParams<{ customerId: string }>();
   const customerIdNum = Number(customerId);
-  
+
   // Form state
   const [formData, setFormData] = useState<MatterCreateRequest>({
     title: "",
@@ -45,7 +45,7 @@ export default function CreateMatter() {
           // Navigate back to the customer's matters list
           navigate(`/matters/${customerIdNum}`);
         },
-      }
+      },
     );
   };
 
@@ -53,7 +53,7 @@ export default function CreateMatter() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
