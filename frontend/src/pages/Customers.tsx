@@ -52,7 +52,6 @@ export default function Customers() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Actions</th>
@@ -61,7 +60,6 @@ export default function Customers() {
             <tbody>
               {customers.map((customer) => (
                 <tr key={customer.id}>
-                  <td>{customer.id}</td>
                   <td>{customer.name}</td>
                   <td>{customer.phone}</td>
                   <td className="flex gap-2">
