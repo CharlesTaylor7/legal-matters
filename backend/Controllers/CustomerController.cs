@@ -4,7 +4,6 @@ using LegalMatters.Models;
 using LegalMatters.Services;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -125,11 +124,11 @@ public class CustomerController : ControllerBase
     /// <param name="customerId">ID of the customer to retrieve</param>
     /// <returns>Customer details</returns>
     [HttpGet("{customerId}")]
-    [ProducesResponseType(typeof(CustomerDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CustomerDetailResponse>> GetCustomer(int customerId)
+    public async Task<ActionResult<CustomerResponse>> GetCustomer(int customerId)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -140,7 +139,7 @@ public class CustomerController : ControllerBase
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
         var customer = await _context
-            .Customers.Include(c => c.Matters)
+            .Customers
             .FirstOrDefaultAsync(c => c.Id == customerId);
 
         if (customer == null)
@@ -157,22 +156,17 @@ public class CustomerController : ControllerBase
             );
         }
 
-        var response = new CustomerDetailResponse
+        // Get count of open matters for this customer
+        var openMattersCount = await _context.Matters
+            .CountAsync(m => m.CustomerId == customerId && m.Status == MatterStatus.Open);
+            
+        var response = new CustomerResponse
         {
             Id = customer.Id,
             Name = customer.Name,
             Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
-            Matters =
-                customer
-                    .Matters?.Select(m => new MatterResponse
-                    {
-                        Id = m.Id,
-                        Title = m.Title,
-                        Description = m.Description,
-                        Status = m.Status,
-                    })
-                    .ToList() ?? new List<MatterResponse>(),
+            OpenMattersCount = openMattersCount
         };
 
         return Ok(response);
@@ -233,7 +227,7 @@ public class CustomerController : ControllerBase
         {
             Id = customer.Id,
             Name = customer.Name,
-            Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone,
+            Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
         };
 

@@ -36,7 +36,7 @@ public class USPhoneNumberService : IPhoneNumberService
         // Validate that we have exactly 10 digits
         if (normalized.Length != 10)
         {
-            throw new ArgumentException("Phone number must be 10 digits", nameof(phoneNumber));
+            throw new ArgumentException($"Phone number must be 10 digits: {phoneNumber}", nameof(phoneNumber));
         }
 
         return normalized;
@@ -45,19 +45,12 @@ public class USPhoneNumberService : IPhoneNumberService
     /// <summary>
     /// Formats a normalized 10-digit phone number into a readable format (XXX) XXX-XXXX
     /// </summary>
-    /// <param name="normalizedPhoneNumber">The normalized 10-digit phone number</param>
+    /// <param name="phoneNumber">The normalized 10-digit phone number</param>
     /// <returns>A formatted phone number string</returns>
     /// <exception cref="ArgumentException">Thrown when the normalized phone number is invalid</exception>
-    public string FormatPhoneNumber(string normalizedPhoneNumber)
+    public string FormatPhoneNumber(string phoneNumber)
     {
-        if (string.IsNullOrWhiteSpace(normalizedPhoneNumber) || normalizedPhoneNumber.Length != 10)
-        {
-            throw new ArgumentException(
-                "Phone number must be a 10-digit string",
-                nameof(normalizedPhoneNumber)
-            );
-        }
-
-        return $"({normalizedPhoneNumber.Substring(0, 3)}) {normalizedPhoneNumber.Substring(3, 3)}-{normalizedPhoneNumber.Substring(6)}";
+        
+        return $"({phoneNumber.Substring(0, 3)}) {phoneNumber.Substring(3, 3)}-{phoneNumber.Substring(6)}";
     }
 }
