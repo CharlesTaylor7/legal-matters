@@ -13,7 +13,7 @@
   .btn:focus {
     @apply outline-none shadow-none;
   }
-  
+
   /* Remove ring/outline when focused */
   *:focus {
     outline: none !important;

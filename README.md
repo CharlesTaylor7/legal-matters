@@ -12,8 +12,6 @@ To build and run the application locally, a `docker-compose.yml` file is provide
 Run the following command:
 
 ```
-# The example environment will out of the box with docker compose  
-cp .env.example .env
 docker compose up --build
 ```
 

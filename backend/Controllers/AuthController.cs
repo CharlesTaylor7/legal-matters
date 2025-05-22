@@ -138,7 +138,7 @@ public class AuthController : ControllerBase
                 Id = user.Id,
                 Email = user.Email,
                 FirmName = user.FirmName,
-                Role = roleEnum
+                Role = roleEnum,
             }
         );
     }

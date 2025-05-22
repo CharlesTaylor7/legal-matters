@@ -148,7 +148,6 @@ public class CustomerController : ControllerBase
             );
         }
 
-
         var response = new CustomerResponse
         {
             Id = customer.Id,

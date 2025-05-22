@@ -49,7 +49,7 @@ export default function EditMatter() {
   const handleUpdateInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUpdateFormData((prev) => ({
@@ -73,7 +73,7 @@ export default function EditMatter() {
         onSuccess: () => {
           navigate(`/matters/${customerIdNum}`);
         },
-      }
+      },
     );
   };
 
