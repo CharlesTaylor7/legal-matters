@@ -1,22 +1,12 @@
 ## Issues
-- [ ] Admin login broken
+- [ ] PUT on matters broken because datetime is required
 
 
 ## nice to have
 - [ ] RBAC policies
 - [ ] playwright 
 - [ ] Auto populate swagger examples with valid values
-- [ ] Path alias for typescript
+- [x] Path alias for typescript
+- [ ] Spinner instead of loading banner
+    - cross fade transition?
 
-
-# Cut for time
-- automated testing:
-  - either Jest & React Testing Library 
-  - or  Playwright for e2e
-
-- phone number validation that works for international numbers. 
-  - https://www.npmjs.com/package/is-phone-number
-  - https://www.nuget.org/packages/libphonenumber-csharp
-- pagination for frontend
-- searching
-- filtering

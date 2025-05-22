@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
-import { useAuthQuery } from "../api/auth";
-import LogoutButton from "./LogoutButton";
+import { useAuthQuery } from "@/api/auth";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function Navbar() {
   // Get user data from the query

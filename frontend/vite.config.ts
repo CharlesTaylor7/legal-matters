@@ -7,6 +7,7 @@ import tsconfig from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfig()],
   server: {
+    open: true,
     port: 3000,
     proxy: {
       "/api": {

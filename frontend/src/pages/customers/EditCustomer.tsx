@@ -4,8 +4,8 @@ import {
   useCustomerQuery,
   useUpdateCustomerMutation,
   type CustomerUpdateRequest,
-} from "../../api/customers";
-import PhoneInput from "../../components/PhoneNumberInput";
+} from "@/api/customers";
+import PhoneInput from "@/components/PhoneNumberInput";
 
 export default function EditCustomer() {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function EditCustomer() {
           // Navigate back to customers list
           navigate("/customers");
         },
-      },
+      }
     );
   };
 

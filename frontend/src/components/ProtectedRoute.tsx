@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Navigate } from "react-router";
-import { useAuthQuery } from "../api/auth";
+import { useAuthQuery } from "@/api/auth";
 
 interface ProtectedRouteProps {
   children: ReactNode;

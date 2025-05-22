@@ -4,6 +4,7 @@ To quickly demo the deployed application, visit:
 
 https://legal-matters.fly.dev
 
+
 ## Developing with Docker Compose
 
 To build and run the application locally, a `docker-compose.yml` file is provided for convenience.
@@ -62,6 +63,20 @@ Access the application at http://localhost:3000. The frontend development server
 For Swagger API documentation, visit http://localhost:5000/swagger
 
 ## CI/CD and Deployments
-This project uses GitHub Actions for CI/CD. All pushes to the main branch automatically run both E2E and unit tests. On success, the application is deployed to https://legal-matters.fly.dev
+This project uses GitHub Actions for CI/CD. All pushes to the main branch automatically run basic validation steps (frontend & backend). On success, the application is deployed to https://legal-matters.fly.dev
 
 All pull requests to main require tests to pass before merging.
+
+
+## Cut for time
+- automated testing:
+  - Jest & React Testing Library 
+  - xunit for backend unit tests
+  - Playwright for e2e
+
+- phone number validation that works for international numbers. 
+  - https://www.npmjs.com/package/is-phone-number
+  - https://www.nuget.org/packages/libphonenumber-csharp
+- pagination for frontend
+- searching
+- filtering

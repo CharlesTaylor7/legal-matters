@@ -260,10 +260,14 @@ public class MattersController : ControllerBase
         }
 
         // Update the matter
-        matter.Title = request.Title;
-        matter.Description = request.Description;
-        matter.Status = request.Status;
-        matter.OpenDate = request.OpenDate ?? matter.OpenDate;
+        if (request.Title != null)
+            matter.Title = request.Title;
+        if (request.Description != null)
+            matter.Description = request.Description;
+        if (request.Status != null)
+            matter.Status = request.Status;
+        if (request.OpenDate != null)
+            matter.OpenDate = request.OpenDate;
 
         // If status is changed to Closed, set CloseDate if not already set
         if (matter.Status == MatterStatus.Closed && matter.CloseDate == null)
@@ -319,29 +323,27 @@ public record MatterCreateRequest
     public required string Title { get; set; }
 
     [StringLength(500)]
-    public string? Description { get; set; }
+    public string Description { get; set; }
 }
 
 public record MatterUpdateRequest
 {
-    [Required]
     [StringLength(100)]
-    public required string Title { get; set; }
+    public string? Title { get; set; }
 
     [StringLength(500)]
     public string? Description { get; set; }
 
     public DateTime? OpenDate { get; set; }
 
-    [Required]
-    public required MatterStatus Status { get; set; }
+    public MatterStatus? Status { get; set; }
 }
 
 public record MatterResponse
 {
     public int Id { get; set; }
     public required string Title { get; set; }
-    public string? Description { get; set; }
+    public required string Description { get; set; }
     public DateTime OpenDate { get; set; }
     public required MatterStatus Status { get; set; }
 }

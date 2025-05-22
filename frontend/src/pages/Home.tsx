@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useAuthQuery } from "../api/auth";
+import { useAuthQuery } from "@/api/auth";
 
 const Home = () => {
   const { data: user, isLoading } = useAuthQuery();
