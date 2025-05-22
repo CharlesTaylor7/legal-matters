@@ -1,7 +1,7 @@
 
 ## Issues
-- [ ] Modals are mutated with dom manip
-- [ ] deletew button uses window confirm instead of modal
+- [x] Modals are mutated with dom manip
+- [x] deletew button uses window confirm instead of modal
 - [ ] error handling is not up to snuff and revise client side handling
 
 

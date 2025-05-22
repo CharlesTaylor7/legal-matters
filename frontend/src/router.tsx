@@ -9,6 +9,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateCustomer from "./pages/customers/CreateCustomer";
 import EditCustomer from "./pages/customers/EditCustomer";
 import DeleteCustomer from "./pages/customers/DeleteCustomer";
+import CreateMatter from "./pages/matters/CreateMatter";
+import EditMatter from "./pages/matters/EditMatter";
+import ViewMatter from "./pages/matters/ViewMatter";
 
 // Create the router
 export const router = createBrowserRouter([
@@ -67,6 +70,29 @@ export const router = createBrowserRouter([
         handle: {
           title: "Matters",
         },
+        children: [
+          {
+            path: "create/:customerId",
+            element: <CreateMatter />,
+            handle: {
+              title: "Add New Matter",
+            },
+          },
+          {
+            path: "view/:customerId/:matterId",
+            element: <ViewMatter />,
+            handle: {
+              title: "View Matter",
+            },
+          },
+          {
+            path: "edit/:customerId/:matterId",
+            element: <EditMatter />,
+            handle: {
+              title: "Edit Matter",
+            },
+          },
+        ],
       },
       {
         path: "login",
