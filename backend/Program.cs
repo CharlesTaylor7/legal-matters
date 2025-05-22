@@ -46,7 +46,7 @@ WebApplicationBuilder Configure()
                 Version = "v1",
                 Title = "Legal Matters API",
                 Description =
-                    "An ASP.NET Core Web API for calculating UK taxes based on gross annual salary",
+                    "An ASP.NET Core REST API for managing Legal Matters",
                 Contact = new OpenApiContact
                 {
                     Name = "Legal Matters Team",
