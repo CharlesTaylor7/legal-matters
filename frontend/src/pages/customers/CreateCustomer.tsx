@@ -3,8 +3,8 @@ import { useNavigate } from "react-router";
 import {
   useCreateCustomerMutation,
   type CustomerCreateRequest,
-} from "../../api/customers";
-import PhoneNumberInput from "../../components/PhoneNumberInput";
+} from "@/api/customers";
+import PhoneNumberInput from "@/components/PhoneNumberInput";
 
 export default function CreateCustomer() {
   const navigate = useNavigate();

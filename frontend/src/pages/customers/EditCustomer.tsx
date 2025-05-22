@@ -48,7 +48,7 @@ export default function EditCustomer() {
           // Navigate back to customers list
           navigate("/customers");
         },
-      }
+      },
     );
   };
 

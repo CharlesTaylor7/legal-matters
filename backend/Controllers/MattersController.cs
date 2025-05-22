@@ -136,7 +136,7 @@ public class MattersController : ControllerBase
         {
             Id = matter.Id,
             Title = matter.Title,
-            Description = matter.Description,
+            Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
         };
@@ -196,7 +196,7 @@ public class MattersController : ControllerBase
         {
             Id = matter.Id,
             Title = matter.Title,
-            Description = matter.Description,
+            Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
         };
@@ -265,9 +265,7 @@ public class MattersController : ControllerBase
         if (request.Description != null)
             matter.Description = request.Description;
         if (request.Status != null)
-            matter.Status = request.Status;
-        if (request.OpenDate != null)
-            matter.OpenDate = request.OpenDate;
+            matter.Status = request.Status.Value;
 
         // If status is changed to Closed, set CloseDate if not already set
         if (matter.Status == MatterStatus.Closed && matter.CloseDate == null)
@@ -302,7 +300,7 @@ public class MattersController : ControllerBase
         {
             Id = matter.Id,
             Title = matter.Title,
-            Description = matter.Description,
+            Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
         };
@@ -333,8 +331,6 @@ public record MatterUpdateRequest
 
     [StringLength(500)]
     public string? Description { get; set; }
-
-    public DateTime? OpenDate { get; set; }
 
     public MatterStatus? Status { get; set; }
 }

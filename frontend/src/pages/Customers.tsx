@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router";
-import { useCustomersQuery, type CustomerResponse } from "../api/customers";
+import { useCustomersQuery, type CustomerResponse } from "@/api/customers";
 
 export default function Customers() {
   const navigate = useNavigate();

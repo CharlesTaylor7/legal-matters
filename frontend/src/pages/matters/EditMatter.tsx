@@ -4,7 +4,7 @@ import {
   useMatterQuery,
   useUpdateMatterMutation,
   type MatterUpdateRequest,
-} from "../../api/matters";
+} from "@/api/matters";
 
 export default function EditMatter() {
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ export default function EditMatter() {
   const [updateFormData, setUpdateFormData] = useState<MatterUpdateRequest>({
     title: "",
     description: "",
-    openDate: new Date().toISOString().split("T")[0],
     status: "Open",
   });
 
@@ -41,7 +40,6 @@ export default function EditMatter() {
       setUpdateFormData({
         title: matterDetail.title,
         description: matterDetail.description || "",
-        openDate: matterDetail.openDate.split("T")[0],
         status: matterDetail.status,
       });
     }
@@ -156,22 +154,6 @@ export default function EditMatter() {
                 value={updateFormData.description}
                 onChange={handleUpdateInputChange}
                 className="textarea textarea-bordered h-24 w-full"
-              />
-            </div>
-
-            <label className="self-center font-medium text-right hidden md:block">
-              Open Date
-            </label>
-            <div className="form-control w-full">
-              <label className="label md:hidden">
-                <span className="label-text">Open Date</span>
-              </label>
-              <input
-                type="date"
-                name="openDate"
-                value={updateFormData.openDate}
-                onChange={handleUpdateInputChange}
-                className="input input-bordered w-full"
               />
             </div>
 

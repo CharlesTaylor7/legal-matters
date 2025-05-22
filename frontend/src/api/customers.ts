@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import axios from "axios";
-import type { SuccessResponse } from "./types";
+import type { SuccessResponse } from "@/api/types";
 
 export interface CustomerResponse {
   id: number;

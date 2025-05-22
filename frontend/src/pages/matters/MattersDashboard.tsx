@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Outlet, useParams } from "react-router";
-import { useCustomersQuery } from "../../api/customers";
+import { useCustomersQuery } from "@/api/customers";
 import { useEffect } from "react";
 
 export default function MattersDashboard() {

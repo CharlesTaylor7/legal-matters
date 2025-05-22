@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useLoginMutation } from "../api/auth";
+import { useLoginMutation } from "@/api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");

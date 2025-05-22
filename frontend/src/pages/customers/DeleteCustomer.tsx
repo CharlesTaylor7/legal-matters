@@ -1,8 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import {
-  useDeleteCustomerMutation,
-  useCustomerQuery,
-} from "../../api/customers";
+import { useDeleteCustomerMutation, useCustomerQuery } from "@/api/customers";
 
 export default function DeleteCustomer() {
   const navigate = useNavigate();

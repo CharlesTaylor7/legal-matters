@@ -1,17 +1,17 @@
 import { createBrowserRouter } from "react-router";
-import App from "./App";
-import Home from "./pages/Home";
-import Customers from "./pages/Customers";
-import Matters from "./pages/Matters";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ProtectedRoute from "./components/ProtectedRoute";
-import CreateCustomer from "./pages/customers/CreateCustomer";
-import EditCustomer from "./pages/customers/EditCustomer";
-import DeleteCustomer from "./pages/customers/DeleteCustomer";
-import CreateMatter from "./pages/matters/CreateMatter";
-import EditMatter from "./pages/matters/EditMatter";
-import MattersDashboard from "./pages/matters/MattersDashboard";
+import App from "@/App";
+import Home from "@/pages/Home";
+import Customers from "@/pages/Customers";
+import Matters from "@/pages/Matters";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import CreateCustomer from "@/pages/customers/CreateCustomer";
+import EditCustomer from "@/pages/customers/EditCustomer";
+import DeleteCustomer from "@/pages/customers/DeleteCustomer";
+import CreateMatter from "@/pages/matters/CreateMatter";
+import EditMatter from "@/pages/matters/EditMatter";
+import MattersDashboard from "@/pages/matters/MattersDashboard";
 
 // Create the router
 export const router = createBrowserRouter([

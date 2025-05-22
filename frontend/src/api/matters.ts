@@ -42,19 +42,17 @@ export interface MatterDetailResponse {
  */
 export interface MatterCreateRequest {
   title: string;
-  description?: string;
-  openDate?: string; // Optional ISO date string
-  status?: MatterStatus; // Optional status
+  description: string;
+  status?: MatterStatus;
 }
 
 /**
  * Interface for updating an existing matter
  */
 export interface MatterUpdateRequest {
-  title: string;
+  title?: string;
   description?: string;
-  openDate?: string; // Optional ISO date string
-  status: MatterStatus; // Required status
+  status?: MatterStatus;
 }
 
 /**

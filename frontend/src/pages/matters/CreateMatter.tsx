@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { MatterCreateRequest } from "../../api/matters";
-import { useCreateMatterMutation } from "../../api/matters";
+import type { MatterCreateRequest } from "@/api/matters";
+import { useCreateMatterMutation } from "@/api/matters";
 
 export default function CreateMatter() {
   const navigate = useNavigate();
@@ -12,7 +12,6 @@ export default function CreateMatter() {
   const [formData, setFormData] = useState<MatterCreateRequest>({
     title: "",
     description: "",
-    openDate: new Date().toISOString().split("T")[0],
     status: "Open",
   });
 
@@ -83,22 +82,6 @@ export default function CreateMatter() {
                 value={formData.description}
                 onChange={handleInputChange}
                 className="textarea textarea-bordered h-24 w-full"
-              />
-            </div>
-
-            <label className="self-center font-medium text-right hidden md:block">
-              Open Date
-            </label>
-            <div className="form-control w-full">
-              <label className="label md:hidden">
-                <span className="label-text">Open Date</span>
-              </label>
-              <input
-                type="date"
-                name="openDate"
-                value={formData.openDate}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
               />
             </div>
           </div>
