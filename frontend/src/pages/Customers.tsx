@@ -77,6 +77,12 @@ export default function Customers() {
                     >
                       Delete
                     </button>
+                    <button
+                      className="btn btn-sm btn-outline btn-primary"
+                      onClick={() => navigate(`/matters/${customer.id}`)}
+                    >
+                      Matters
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -11,7 +11,8 @@ import EditCustomer from "./pages/customers/EditCustomer";
 import DeleteCustomer from "./pages/customers/DeleteCustomer";
 import CreateMatter from "./pages/matters/CreateMatter";
 import EditMatter from "./pages/matters/EditMatter";
-import ViewMatter from "./pages/matters/ViewMatter";
+import MattersDashboard from "./pages/matters/MattersDashboard";
+import MattersByCustomer from "./pages/matters/MattersByCustomer";
 
 // Create the router
 export const router = createBrowserRouter([
@@ -64,27 +65,35 @@ export const router = createBrowserRouter([
         path: "matters",
         element: (
           <ProtectedRoute>
-            <Matters />
+            <MattersDashboard />
           </ProtectedRoute>
         ),
         handle: {
-          title: "Matters",
+          title: "Matters Dashboard",
         },
         children: [
           {
-            path: "create/:customerId",
-            element: <CreateMatter />,
+            path: ":customerId",
+            element: <MattersByCustomer />,
             handle: {
-              title: "Add New Matter",
+              title: "Customer Matters",
             },
-          },
-
-          {
-            path: "edit/:customerId/:matterId",
-            element: <EditMatter />,
-            handle: {
-              title: "Edit Matter",
-            },
+            children: [
+              {
+                path: "create",
+                element: <CreateMatter />,
+                handle: {
+                  title: "Add New Matter",
+                },
+              },
+              {
+                path: "edit/:matterId",
+                element: <EditMatter />,
+                handle: {
+                  title: "Edit Matter",
+                },
+              },
+            ],
           },
         ],
       },

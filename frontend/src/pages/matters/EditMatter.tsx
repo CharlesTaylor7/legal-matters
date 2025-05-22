@@ -75,7 +75,7 @@ export default function EditMatter() {
       },
       {
         onSuccess: () => {
-          navigate("/matters");
+          navigate(`/matters/${customerIdNum}`);
         },
       }
     );
@@ -106,7 +106,7 @@ export default function EditMatter() {
         </div>
         <div
           className="modal-backdrop"
-          onClick={() => navigate("/matters")}
+          onClick={() => navigate(`/matters/${customerIdNum}`)}
         ></div>
       </div>
     );
@@ -122,7 +122,7 @@ export default function EditMatter() {
           <div className="modal-action">
             <button
               className="btn"
-              onClick={() => navigate("/matters")}
+              onClick={() => navigate(`/matters/${customerIdNum}`)}
             >
               Close
             </button>
@@ -130,7 +130,7 @@ export default function EditMatter() {
         </div>
         <div
           className="modal-backdrop"
-          onClick={() => navigate("/matters")}
+          onClick={() => navigate(`/matters/${customerIdNum}`)}
         ></div>
       </div>
     );
@@ -217,7 +217,7 @@ export default function EditMatter() {
             <button
               type="button"
               className="btn"
-              onClick={() => navigate("/matters")}
+              onClick={() => navigate(`/matters/${customerIdNum}`)}
             >
               Cancel
             </button>

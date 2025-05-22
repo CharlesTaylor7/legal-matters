@@ -12,6 +12,7 @@ export interface CustomerResponse {
   name: string;
   phone: string;
   lawyerId: number;
+  openMattersCount: number;
 }
 
 // Alias for backward compatibility

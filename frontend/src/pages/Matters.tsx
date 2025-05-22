@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { Outlet, useNavigate, useParams } from "react-router";
 import { useCustomersQuery } from "../api/customers";
 import {
   useMattersQuery,
@@ -9,11 +9,19 @@ import {
 
 export default function Matters() {
   const navigate = useNavigate();
+  const { customerId } = useParams<{ customerId?: string }>();
   
   // State for customer selection
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
-    null
+    customerId ? Number(customerId) : null
   );
+  
+  // Update URL when customer changes
+  useEffect(() => {
+    if (customerId && Number(customerId) !== selectedCustomerId) {
+      setSelectedCustomerId(Number(customerId));
+    }
+  }, [customerId]);
 
   // Fetch customers
   const {
@@ -33,8 +41,15 @@ export default function Matters() {
 
   // Handle customer selection
   const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const customerId = Number(e.target.value);
-    setSelectedCustomerId(customerId || null);
+    const newCustomerId = Number(e.target.value);
+    setSelectedCustomerId(newCustomerId || null);
+    
+    // Update URL to reflect the selected customer
+    if (newCustomerId) {
+      navigate(`/matters/${newCustomerId}`);
+    } else {
+      navigate('/matters');
+    }
   };
 
 

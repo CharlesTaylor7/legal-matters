@@ -2,6 +2,7 @@
 ## Issues
 - [x] Modals are mutated with dom manip
 - [x] deletew button uses window confirm instead of modal
+- [ ] Remove ids from table viewsG
 - [ ] error handling is not up to snuff and revise client side handling
 
 
@@ -18,7 +19,13 @@
 - [ ] Banner stretches across the screen. Maybe shrink it down a bit?
 - [ ] paginated card view for customers
 - logout button is not aligned to navigtation items
-- login/signup Input box highlight overlaps label text. Removed focused style?
-- [ ] client side phone number validation
-- [ ] server side phone number validation?
 
+
+# Cut for time
+- automated testing:
+  - either Jest & React Testing Library 
+  - or  Playwright for e2e
+
+- phone number validation that works for international numbers. 
+  - https://www.npmjs.com/package/is-phone-number
+  - https://www.nuget.org/packages/libphonenumber-csharp

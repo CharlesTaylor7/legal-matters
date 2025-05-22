@@ -42,8 +42,8 @@ export default function CreateMatter() {
       },
       {
         onSuccess: () => {
-          // Navigate back to the matters list
-          navigate("/matters");
+          // Navigate back to the customer's matters list
+          navigate(`/matters/${customerIdNum}`);
         },
       }
     );
@@ -124,7 +124,7 @@ export default function CreateMatter() {
             <button
               type="button"
               className="btn"
-              onClick={() => navigate("/matters")}
+              onClick={() => navigate(`/matters/${customerIdNum}`)}
             >
               Cancel
             </button>
