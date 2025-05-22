@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LegalMatters.Data;
 using LegalMatters.Models;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -48,10 +49,22 @@ public class AuthController : ControllerBase
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ModelState.AddModelError(
+                "User",
+                string.Join(",", result.Errors.Select(e => e.Description))
+            );
+
+            return BadRequest(ModelState);
+        }
+
+        // Assign the lawyer role to all users on signup
+        var roleResult = await _userManager.AddToRoleAsync(user, Roles.Lawyer);
+        if (!roleResult.Succeeded)
+        {
+            ModelState.AddModelError(
+                "Role",
+                string.Join(",", roleResult.Errors.Select(e => e.Description))
+            );
             return BadRequest(ModelState);
         }
 
@@ -115,12 +128,17 @@ public class AuthController : ControllerBase
             return Unauthorized(new ErrorResponse { Message = "Not authenticated" });
         }
 
+        // Get user roles and determine if admin or lawyer
+        var roles = await _userManager.GetRolesAsync(user);
+        var roleEnum = roles.Contains(Roles.Admin) ? RoleEnum.Admin : RoleEnum.Lawyer;
+
         return Ok(
             new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email,
                 FirmName = user.FirmName,
+                Role = roleEnum
             }
         );
     }
@@ -175,4 +193,5 @@ public record UserResponse
     public int Id { get; set; }
     public required string Email { get; set; }
     public required string FirmName { get; set; }
+    public required RoleEnum Role { get; set; }
 }

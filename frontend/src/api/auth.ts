@@ -13,7 +13,10 @@ export interface User {
   id: number;
   email: string;
   firmName: string;
+  role: Role;
 }
+
+export type Role = "Admin" | "Lawyer";
 
 export interface LoginRequest {
   email: string;
