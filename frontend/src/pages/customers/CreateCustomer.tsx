@@ -4,6 +4,7 @@ import {
   useCreateCustomerMutation,
   type CustomerCreateRequest,
 } from "../../api/customers";
+import PhoneNumberInput from "../../components/PhoneNumberInput";
 
 export default function CreateCustomer() {
   const navigate = useNavigate();
@@ -56,18 +57,7 @@ export default function CreateCustomer() {
               <label className="label md:hidden">
                 <span className="label-text">Phone Number</span>
               </label>
-              <input
-                type="tel"
-                className="input input-bordered w-full"
-                value={newCustomer.phone}
-                onChange={(e) =>
-                  setNewCustomer({ ...newCustomer, phone: e.target.value })
-                }
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                title="Phone number must be in format: 123-456-7890"
-                placeholder="123-456-7890"
-                required
-              />
+              <PhoneNumberInput required />
               <div className="text-error text-sm mt-1">
                 {newCustomer.phone &&
                   !/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/.test(newCustomer.phone) && (

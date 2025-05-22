@@ -1,5 +1,5 @@
 import React, { useState, type ComponentProps } from "react";
-import InputMask from "react-input-mask";
+import { IMaskInput } from "react-imask";
 import {
   parsePhoneNumberFromString,
   getExampleNumber,
@@ -8,6 +8,8 @@ import {
 
 interface Props extends ComponentProps<typeof InputMask> {
   country: CountryCode;
+  className?: string;
+  required?: boolean;
   // hide some inherited props; these are controlled by the wrapper
   mask: never;
   placeholder: never;
@@ -37,7 +39,7 @@ export default function PhoneNumberInput(props: Props) {
 
   return (
     <div>
-      <InputMask
+      <IMaskInput>
         maskChar="_"
         {...props}
         onChange={handleChange}
@@ -47,11 +49,12 @@ export default function PhoneNumberInput(props: Props) {
         {(inputProps: ComponentProps<"input">) => (
           <input
             {...inputProps}
+            required={props.required}
             type="tel"
-            className={`input input-bordered ${isValid ? "input-success" : "input-warning"} ${props.className}`}
+            className={`input input-bordered ${isValid ? "input-success" : "input-warning"} ${props.className ?? ""}`}
           />
         )}
-      </InputMask>
+      </IMaskInput>
     </div>
   );
 }
