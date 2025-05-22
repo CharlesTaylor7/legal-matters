@@ -1,3 +1,13 @@
+## UI Tweaks
+- [ ] Banner stretches across the screen. Maybe shrink it down a bit?
+- logout button is not aligned to navigtation items
+- [x] card view for customers
+- [ ] Matters
+  - remove back to dashboard.
+  - remove redundant button
+  - Put Joe's phone number on his card
+
+
 
 ## Issues
 - [x] Modals are mutated with dom manip
@@ -15,12 +25,6 @@
 - [ ] Path alias for typescript
 
 
-## UI Tweaks
-- [ ] Banner stretches across the screen. Maybe shrink it down a bit?
-- [ ] paginated card view for customers
-- logout button is not aligned to navigtation items
-
-
 # Cut for time
 - automated testing:
   - either Jest & React Testing Library 
@@ -29,3 +33,6 @@
 - phone number validation that works for international numbers. 
   - https://www.npmjs.com/package/is-phone-number
   - https://www.nuget.org/packages/libphonenumber-csharp
+- pagination for frontend
+- searching
+- filtering
