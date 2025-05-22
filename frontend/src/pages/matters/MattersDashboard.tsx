@@ -82,30 +82,24 @@ export default function MattersDashboard() {
               key={customer.id}
               className="card bg-base-100 shadow-md transition-shadow"
             >
-              <div className="card-body p-0">
-                {/* Matter count badge */}
-                <div className="">{customer.openMattersCount}</div>
-
-                <div className="p-5">
-                  <h2 className="card-title">{customer.name}</h2>
-                  <p className="text-sm opacity-70">{customer.phone}</p>
-
-                  <div className="card-actions justify-end mt-4">
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => handleCustomerClick(customer.id)}
-                    >
-                      View Matters
-                    </button>
+              <div className="card-body p-4">
+                <h2 className="card-title">{customer.name}</h2>
+                <p className="text-sm opacity-70">{customer.phone}</p>
+                
+                <div className="flex items-center justify-between mt-3">
+                  <div className="badge badge-info">
+                    {customer.openMattersCount}{" "}
+                    {customer.openMattersCount === 1
+                      ? "Open Matter"
+                      : "Open Matters"}
                   </div>
-                </div>
-
-                {/* Footer with matters count */}
-                <div className="bg-base-200 px-5 py-2 text-sm">
-                  {customer.openMattersCount}{" "}
-                  {customer.openMattersCount === 1
-                    ? "Open Matter"
-                    : "Open Matters"}
+                  
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleCustomerClick(customer.id)}
+                  >
+                    View Matters
+                  </button>
                 </div>
               </div>
             </div>
