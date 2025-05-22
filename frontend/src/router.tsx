@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateCustomer from "./pages/customers/CreateCustomer";
 import EditCustomer from "./pages/customers/EditCustomer";
+import DeleteCustomer from "./pages/customers/DeleteCustomer";
 
 // Create the router
 export const router = createBrowserRouter([
@@ -45,6 +46,13 @@ export const router = createBrowserRouter([
             element: <EditCustomer />,
             handle: {
               title: "Edit Customer",
+            },
+          },
+          {
+            path: "delete/:customerId",
+            element: <DeleteCustomer />,
+            handle: {
+              title: "Delete Customer",
             },
           },
         ],

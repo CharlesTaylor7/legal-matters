@@ -1,11 +1,5 @@
-import { useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router";
-import {
-  useCustomersQuery,
-  useUpdateCustomerMutation,
-  useDeleteCustomerMutation,
-  type Customer,
-} from "../api/customers";
+import { Outlet, useNavigate } from "react-router";
+import { useCustomersQuery, type Customer } from "../api/customers";
 
 export default function Customers() {
   const navigate = useNavigate();
@@ -18,19 +12,14 @@ export default function Customers() {
     error,
   } = useCustomersQuery();
 
-  // Mutations for deleting customers
-  const deleteCustomerMutation = useDeleteCustomerMutation();
-
   // Navigate to edit customer page
   const handleEdit = (customer: Customer) => {
     navigate(`edit/${customer.id}`);
   };
 
-  // Handle customer deletion
+  // Navigate to delete confirmation page
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this customer?")) {
-      deleteCustomerMutation.mutate(id);
-    }
+    navigate(`delete/${id}`);
   };
 
   return (
@@ -83,9 +72,8 @@ export default function Customers() {
                       Edit
                     </button>
                     <button
-                      className="btn btn-sm btn-error"
+                      className="btn btn-sm btn-outline btn-error"
                       onClick={() => handleDelete(customer.id)}
-                      disabled={deleteCustomerMutation.isPending}
                     >
                       Delete
                     </button>
