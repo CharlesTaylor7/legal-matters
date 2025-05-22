@@ -180,44 +180,53 @@ export default function Customers() {
         id="add_customer_modal"
         className="modal modal-bottom sm:modal-middle"
       >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Add New Customer</h3>
+        <div className="modal-box max-w-2xl">
+          <h3 className="font-bold text-lg mb-6">Add New Customer</h3>
 
           <form onSubmit={handleSubmit}>
-            <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Customer Name</span>
+            <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
+              <label className="self-center font-medium text-right hidden md:block">
+                Customer Name
               </label>
-              <input
-                type="text"
-                className="input input-bordered"
-                value={newCustomer.name}
-                onChange={(e) =>
-                  setNewCustomer({ ...newCustomer, name: e.target.value })
-                }
-                required
-              />
-            </div>
+              <div className="form-control w-full">
+                <label className="label md:hidden">
+                  <span className="label-text">Customer Name</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  value={newCustomer.name}
+                  onChange={(e) =>
+                    setNewCustomer({ ...newCustomer, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
-            <div className="form-control mb-6">
-              <label className="label">
-                <span className="label-text">Phone Number</span>
+              <label className="self-center font-medium text-right hidden md:block">
+                Phone Number
               </label>
-              <input
-                type="tel"
-                className="input input-bordered"
-                value={newCustomer.phone}
-                onChange={(e) =>
-                  setNewCustomer({ ...newCustomer, phone: e.target.value })
-                }
-                required
-              />
+              <div className="form-control w-full">
+                <label className="label md:hidden">
+                  <span className="label-text">Phone Number</span>
+                </label>
+                <input
+                  type="tel"
+                  className="input input-bordered w-full"
+                  value={newCustomer.phone}
+                  onChange={(e) =>
+                    setNewCustomer({ ...newCustomer, phone: e.target.value })
+                  }
+                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                  required
+                />
+              </div>
             </div>
 
             <div className="modal-action">
               <button
                 type="button"
-                className="btn btn-ghost"
+                className="btn"
                 onClick={() => {
                   const modal = document.getElementById(
                     "add_customer_modal",
@@ -232,9 +241,14 @@ export default function Customers() {
                 className="btn btn-primary"
                 disabled={createCustomerMutation.isPending}
               >
-                {createCustomerMutation.isPending
-                  ? "Saving..."
-                  : "Save Customer"}
+                {createCustomerMutation.isPending ? (
+                  <>
+                    <span className="loading loading-spinner loading-xs"></span>
+                    Saving...
+                  </>
+                ) : (
+                  "Save Customer"
+                )}
               </button>
             </div>
           </form>
@@ -249,51 +263,59 @@ export default function Customers() {
         id="edit_customer_modal"
         className="modal modal-bottom sm:modal-middle"
       >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Edit Customer</h3>
+        <div className="modal-box max-w-2xl">
+          <h3 className="font-bold text-lg mb-6">Edit Customer</h3>
 
           {editingCustomer && (
             <form onSubmit={handleUpdateSubmit}>
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Customer Name</span>
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
+                <label className="self-center font-medium text-right hidden md:block">
+                  Customer Name
                 </label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  value={editingCustomer.name}
-                  onChange={(e) =>
-                    setEditingCustomer({
-                      ...editingCustomer,
-                      name: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
+                <div className="form-control w-full">
+                  <label className="label md:hidden">
+                    <span className="label-text">Customer Name</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={editingCustomer.name}
+                    onChange={(e) =>
+                      setEditingCustomer({
+                        ...editingCustomer,
+                        name: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
 
-              <div className="form-control mb-6">
-                <label className="label">
-                  <span className="label-text">Phone Number</span>
+                <label className="self-center font-medium text-right hidden md:block">
+                  Phone Number
                 </label>
-                <input
-                  type="tel"
-                  className="input input-bordered"
-                  value={editingCustomer.phone}
-                  onChange={(e) =>
-                    setEditingCustomer({
-                      ...editingCustomer,
-                      phone: e.target.value,
-                    })
-                  }
-                  required
-                />
+                <div className="form-control w-full">
+                  <label className="label md:hidden">
+                    <span className="label-text">Phone Number</span>
+                  </label>
+                  <input
+                    type="tel"
+                    className="input input-bordered w-full"
+                    value={editingCustomer.phone}
+                    onChange={(e) =>
+                      setEditingCustomer({
+                        ...editingCustomer,
+                        phone: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
               </div>
 
               <div className="modal-action">
                 <button
                   type="button"
-                  className="btn btn-ghost"
+                  className="btn"
                   onClick={() => {
                     setEditingCustomer(null);
                     const modal = document.getElementById(
@@ -309,9 +331,14 @@ export default function Customers() {
                   className="btn btn-primary"
                   disabled={updateCustomerMutation.isPending}
                 >
-                  {updateCustomerMutation.isPending
-                    ? "Updating..."
-                    : "Update Customer"}
+                  {updateCustomerMutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner loading-xs"></span>
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Customer"
+                  )}
                 </button>
               </div>
             </form>
@@ -327,24 +354,24 @@ export default function Customers() {
         id="view_customer_modal"
         className="modal modal-bottom sm:modal-middle"
       >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Customer Details</h3>
+        <div className="modal-box max-w-2xl">
+          <h3 className="font-bold text-lg mb-6">Customer Details</h3>
 
           {viewingCustomer && (
             <div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <h4 className="font-semibold text-sm opacity-75">
+                  <h4 className="font-medium text-sm opacity-70">
                     Customer ID
                   </h4>
                   <p>{viewingCustomer.id}</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm opacity-75">Name</h4>
+                  <h4 className="font-medium text-sm opacity-70">Name</h4>
                   <p>{viewingCustomer.name}</p>
                 </div>
-                <div className="col-span-2">
-                  <h4 className="font-semibold text-sm opacity-75">Phone</h4>
+                <div className="col-span-1 md:col-span-2">
+                  <h4 className="font-medium text-sm opacity-70">Phone</h4>
                   <p>{viewingCustomer.phone}</p>
                 </div>
               </div>

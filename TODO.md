@@ -46,6 +46,9 @@
 
 
 ## UI Tweaks
+- [ ] Banner stretches across the screen. Maybe shrink it down a bit?
+- [ ] paginated card view for customers
 - logout button is not aligned to navigtation items
 - login/signup Input box highlight overlaps label text. Removed focused style?
+- phone number validation
 
