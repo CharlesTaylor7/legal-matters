@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import {
-  useCreateMatterMutation,
-  type MatterCreateRequest,
-  MatterStatus,
-} from "../../api/matters";
+import type { MatterCreateRequest } from "../../api/matters";
+import { useCreateMatterMutation } from "../../api/matters";
 
 export default function CreateMatter() {
   const navigate = useNavigate();
@@ -45,7 +42,7 @@ export default function CreateMatter() {
           // Navigate back to the customer's matters list
           navigate(`/matters/${customerIdNum}`);
         },
-      },
+      }
     );
   };
 
@@ -53,7 +50,7 @@ export default function CreateMatter() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -116,8 +113,6 @@ export default function CreateMatter() {
                 className="input input-bordered w-full"
               />
             </div>
-
-            {/* Status field removed from creation form - all matters are created as Open */}
           </div>
 
           <div className="modal-action">

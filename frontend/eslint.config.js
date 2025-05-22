@@ -21,7 +21,18 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       // Disallow TypeScript namespaces
-      "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
+      "@typescript-eslint/no-namespace": [
+        "error",
+        {
+          allowDeclarations: true,
+        },
+      ],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+        },
+      ],
 
       // Disallow TypeScript enums
       "no-restricted-syntax": [

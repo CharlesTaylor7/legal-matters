@@ -4,7 +4,6 @@ import {
   useMatterQuery,
   useUpdateMatterMutation,
   type MatterUpdateRequest,
-  MatterStatus,
 } from "../../api/matters";
 
 export default function EditMatter() {

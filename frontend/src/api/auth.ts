@@ -65,7 +65,7 @@ export const useLoginMutation = (): UseMutationResult<
     mutationFn: async (credentials: LoginRequest) => {
       // Login and get success response
       await axios.post<SuccessResponse>("/api/auth/login", credentials);
-      
+
       // Fetch the user data after successful login
       const userResponse = await axios.get<User>("/api/auth/me");
       return userResponse.data;

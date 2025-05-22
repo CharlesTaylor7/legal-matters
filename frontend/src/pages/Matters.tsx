@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useParams } from "react-router";
 import { useCustomerQuery } from "../api/customers";
-import { useMattersQuery, MatterStatus } from "../api/matters";
+import { useMattersQuery, type MatterStatus } from "../api/matters";
 
 export default function Matters() {
   const navigate = useNavigate();

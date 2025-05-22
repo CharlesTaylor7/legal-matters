@@ -5,7 +5,7 @@ import {
   type UseMutationResult,
   useQueryClient,
 } from "@tanstack/react-query";
-import { type ErrorResponse } from "./types";
+import axios from "axios";
 
 /**
  * Matter status type matching the backend MatterStatus enum values
@@ -67,17 +67,12 @@ export const useMattersQuery = (
 ): UseQueryResult<MatterResponse[], Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters"],
-    queryFn: async () => {
-      const response = await fetch(`/api/customers/${customerId}/matters`);
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to fetch matters");
-      }
-
-      return response.json() as Promise<MatterResponse[]>;
+    queryFn: async ({ signal }) => {
+      const response = await axios.get<MatterResponse[]>(
+        `/api/customers/${customerId}/matters`,
+        { signal },
+      );
+      return response.data;
     },
     enabled: !!customerId, // Only run the query if customerId is provided
   });
@@ -95,19 +90,12 @@ export const useMatterQuery = (
 ): UseQueryResult<MatterDetailResponse, Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters", matterId],
-    queryFn: async () => {
-      const response = await fetch(
+    queryFn: async ({ signal }) => {
+      const response = await axios.get<MatterDetailResponse>(
         `/api/customers/${customerId}/matters/${matterId}`,
+        { signal },
       );
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to fetch matter");
-      }
-
-      return response.json() as Promise<MatterDetailResponse>;
+      return response.data;
     },
     enabled: !!customerId && !!matterId, // Only run the query if both IDs are provided
   });
@@ -133,22 +121,11 @@ export const useCreateMatterMutation = (): UseMutationResult<
       customerId: number;
       data: MatterCreateRequest;
     }) => {
-      const response = await fetch(`/api/customers/${customerId}/matters`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to create matter");
-      }
-
-      return response.json() as Promise<MatterResponse>;
+      const response = await axios.post<MatterResponse>(
+        `/api/customers/${customerId}/matters`,
+        data,
+      );
+      return response.data;
     },
     onSuccess: (data, { customerId }) => {
       // Invalidate matters query to refetch the list
@@ -183,25 +160,11 @@ export const useUpdateMatterMutation = (): UseMutationResult<
       matterId: number;
       data: MatterUpdateRequest;
     }) => {
-      const response = await fetch(
+      const response = await axios.put<MatterResponse>(
         `/api/customers/${customerId}/matters/${matterId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
+        data,
       );
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to update matter");
-      }
-
-      return response.json() as Promise<MatterResponse>;
+      return response.data;
     },
     onSuccess: (data, { customerId, matterId }) => {
       // Invalidate specific matter query
