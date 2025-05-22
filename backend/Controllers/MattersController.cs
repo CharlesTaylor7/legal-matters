@@ -348,17 +348,6 @@ public record MatterResponse
     public required string Title { get; set; }
     public string? Description { get; set; }
     public DateTime OpenDate { get; set; }
-    public MatterStatus Status { get; set; }
-    public int CustomerId { get; set; }
+    public required string Status { get; set; }
 }
 
-public record MatterDetailResponse
-{
-    public int Id { get; set; }
-    public required string Title { get; set; }
-    public string? Description { get; set; }
-    public DateTime OpenDate { get; set; }
-    public MatterStatus Status { get; set; }
-    public int CustomerId { get; set; }
-    public required string CustomerName { get; set; }
-}
