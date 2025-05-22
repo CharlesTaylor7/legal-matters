@@ -42,6 +42,7 @@
 - [ ] playwright maybe
 - [ ] Auto populate swagger examples with valid values
 - [ ] Matter status should be text not enum, for the sake of swagger docs
+- [ ] Path alias for typescript
 
 
 ## UI Tweaks

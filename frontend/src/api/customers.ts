@@ -5,7 +5,7 @@ import {
   type UseMutationResult,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ErrorResponse, SuccessResponse } from "./types";
+import type { ErrorResponse, SuccessResponse } from "./types";
 
 export interface CustomerResponse {
   id: number;
