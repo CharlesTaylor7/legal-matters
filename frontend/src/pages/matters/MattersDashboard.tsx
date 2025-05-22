@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
-import { Outlet } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { useCustomersQuery } from "../../api/customers";
 
 export default function MattersDashboard() {
   const navigate = useNavigate();
+  const { customerId: activeCustomerId } = useParams<{ customerId?: string }>();
 
   // Fetch all customers (now with open matters count)
   const {
@@ -80,7 +81,7 @@ export default function MattersDashboard() {
           {customers.map((customer) => (
             <div
               key={customer.id}
-              className="card bg-base-100 shadow-md transition-shadow"
+              className={`card shadow-md transition-all hover:shadow-lg ${customer.id.toString() === activeCustomerId ? 'bg-primary bg-opacity-10 border border-primary' : 'bg-base-100'}`}
             >
               <div className="card-body p-4">
                 <h2 className="card-title">{customer.name}</h2>
