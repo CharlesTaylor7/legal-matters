@@ -217,6 +217,7 @@ export default function Customers() {
                   onChange={(e) =>
                     setNewCustomer({ ...newCustomer, phone: e.target.value })
                   }
+                  title="Please format like 123-456-7890"
                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                   required
                 />
@@ -307,6 +308,8 @@ export default function Customers() {
                         phone: e.target.value,
                       })
                     }
+                    title="Please format like 123-456-7890"
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     required
                   />
                 </div>
