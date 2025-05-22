@@ -1,11 +1,7 @@
 ## UI Tweaks
 - [ ] Banner stretches across the screen. Maybe shrink it down a bit?
 - logout button is not aligned to navigtation items
-- [x] card view for customers
-- [ ] Matters
-  - remove back to dashboard.
-  - remove redundant button
-  - Put Joe's phone number on his card
+- [ ] delete should be last
 
 
 

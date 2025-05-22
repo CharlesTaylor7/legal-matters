@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { Outlet, useParams } from "react-router";
 import { useCustomersQuery } from "../../api/customers";
+import { useEffect } from "react";
 
 export default function MattersDashboard() {
   const navigate = useNavigate();
@@ -13,17 +14,30 @@ export default function MattersDashboard() {
     error: customersError,
   } = useCustomersQuery();
 
-  // Handle customer card click
-  const handleCustomerClick = (customerId: number) => {
-    navigate(`/matters/${customerId}`);
+  // Handle customer selection change
+  const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCustomerId = e.target.value;
+    if (selectedCustomerId) {
+      navigate(`/matters/${selectedCustomerId}`);
+    }
   };
+  
+  // If a customer is selected in the URL but not in the dropdown, update the dropdown
+  useEffect(() => {
+    if (activeCustomerId && customers.length > 0) {
+      const customerExists = customers.some(c => c.id.toString() === activeCustomerId);
+      if (!customerExists) {
+        // If customer doesn't exist, reset to the dashboard
+        navigate('/matters');
+      }
+    }
+  }, [activeCustomerId, customers, navigate]);
 
   if (isLoadingCustomers) {
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Matters Dashboard</h1>
-        <div className="flex justify-center my-12">
-          <div className="loading loading-spinner loading-lg"></div>
+        <div className="flex justify-center my-6">
+          <div className="loading loading-spinner loading-md"></div>
         </div>
       </div>
     );
@@ -32,24 +46,21 @@ export default function MattersDashboard() {
   if (customersError) {
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Matters Dashboard</h1>
         <div className="alert alert-error">
-          <div className="flex-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="w-6 h-6 mx-2 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-              ></path>
-            </svg>
-            <label>Error loading customers: {customersError.message}</label>
-          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="w-6 h-6 mx-2 stroke-current"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+            ></path>
+          </svg>
+          <span>Error loading customers: {customersError.message}</span>
         </div>
       </div>
     );
@@ -57,8 +68,6 @@ export default function MattersDashboard() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Matters Dashboard</h1>
-
       {customers.length === 0 ? (
         <div className="alert alert-info">
           <svg
@@ -77,34 +86,21 @@ export default function MattersDashboard() {
           <span>No customers found. Please add customers first.</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {customers.map((customer) => (
-            <div
-              key={customer.id}
-              className={`card shadow-md transition-all hover:shadow-lg ${customer.id.toString() === activeCustomerId ? 'bg-primary bg-opacity-10 border border-primary' : 'bg-base-100'}`}
-            >
-              <div className="card-body p-4">
-                <h2 className="card-title">{customer.name}</h2>
-                <p className="text-sm opacity-70">{customer.phone}</p>
-                
-                <div className="flex items-center justify-between mt-3">
-                  <div className="badge badge-info">
-                    {customer.openMattersCount}{" "}
-                    {customer.openMattersCount === 1
-                      ? "Open Matter"
-                      : "Open Matters"}
-                  </div>
-                  
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleCustomerClick(customer.id)}
-                  >
-                    View Matters
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="form-control w-full max-w-xs mx-auto mb-6">
+          <select
+            className="select select-bordered w-full"
+            value={activeCustomerId || ""}
+            onChange={handleCustomerChange}
+          >
+            <option value="" disabled>
+              Select a customer
+            </option>
+            {customers.map((customer) => (
+              <option key={customer.id} value={customer.id}>
+                {customer.name} ({customer.openMattersCount} {customer.openMattersCount === 1 ? "Matter" : "Matters"})
+              </option>
+            ))}
+          </select>
         </div>
       )}
 

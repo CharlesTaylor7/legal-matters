@@ -64,6 +64,12 @@ export default function Customers() {
                   <td>{customer.phone}</td>
                   <td className="flex gap-2">
                     <button
+                      className="btn btn-sm btn-outline btn-primary"
+                      onClick={() => navigate(`/matters/${customer.id}`)}
+                    >
+                      Matters
+                    </button>
+                    <button
                       className="btn btn-sm btn-outline btn-accent"
                       onClick={() => handleEdit(customer)}
                     >
@@ -74,12 +80,6 @@ export default function Customers() {
                       onClick={() => handleDelete(customer.id)}
                     >
                       Delete
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline btn-primary"
-                      onClick={() => navigate(`/matters/${customer.id}`)}
-                    >
-                      Matters
                     </button>
                   </td>
                 </tr>
