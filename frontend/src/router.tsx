@@ -6,6 +6,7 @@ import Matters from "./pages/Matters";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreateCustomer from "./pages/customers/CreateCustomer";
 
 // Create the router
 export const router = createBrowserRouter([
@@ -30,6 +31,15 @@ export const router = createBrowserRouter([
         handle: {
           title: "Customers",
         },
+        children: [
+          {
+            path: "create",
+            element: <CreateCustomer />,
+            handle: {
+              title: "Add New Customer",
+            },
+          },
+        ],
       },
       {
         path: "matters",

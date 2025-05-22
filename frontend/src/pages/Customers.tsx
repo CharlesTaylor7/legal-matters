@@ -1,18 +1,15 @@
 import { useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router";
 import {
   useCustomersQuery,
-  useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
   type Customer,
-  type CustomerInput,
 } from "../api/customers";
 
 export default function Customers() {
-  const [newCustomer, setNewCustomer] = useState<CustomerInput>({
-    name: "",
-    phone: "",
-  });
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // State for editing and viewing a customer
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
@@ -26,25 +23,9 @@ export default function Customers() {
     error,
   } = useCustomersQuery();
 
-  // Mutations for creating, updating, and deleting customers
-  const createCustomerMutation = useCreateCustomerMutation();
+  // Mutations for updating, and deleting customers
   const updateCustomerMutation = useUpdateCustomerMutation();
   const deleteCustomerMutation = useDeleteCustomerMutation();
-
-  // Handle form submission for creating a new customer
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createCustomerMutation.mutate(newCustomer, {
-      onSuccess: () => {
-        setNewCustomer({ name: "", phone: "" });
-        // Close the modal using the HTML dialog element's close method
-        const modal = document.getElementById(
-          "add_customer_modal",
-        ) as HTMLDialogElement;
-        if (modal) modal.close();
-      },
-    });
-  };
 
   // Handle form submission for updating a customer
   const handleUpdateSubmit = (e: React.FormEvent) => {
@@ -64,11 +45,11 @@ export default function Customers() {
           setEditingCustomer(null);
           // Close the modal using the HTML dialog element's close method
           const modal = document.getElementById(
-            "edit_customer_modal",
+            "edit_customer_modal"
           ) as HTMLDialogElement;
           if (modal) modal.close();
         },
-      },
+      }
     );
   };
 
@@ -76,7 +57,7 @@ export default function Customers() {
   const handleEdit = (customer: Customer) => {
     setEditingCustomer(customer);
     const modal = document.getElementById(
-      "edit_customer_modal",
+      "edit_customer_modal"
     ) as HTMLDialogElement;
     if (modal) modal.showModal();
   };
@@ -85,7 +66,7 @@ export default function Customers() {
   const handleView = (customer: Customer) => {
     setViewingCustomer(customer);
     const modal = document.getElementById(
-      "view_customer_modal",
+      "view_customer_modal"
     ) as HTMLDialogElement;
     if (modal) modal.showModal();
   };
@@ -101,15 +82,7 @@ export default function Customers() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Customers</h1>
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            const modal = document.getElementById(
-              "add_customer_modal",
-            ) as HTMLDialogElement;
-            if (modal) modal.showModal();
-          }}
-        >
+        <button className="btn btn-primary" onClick={() => navigate("create")}>
           Add Customer
         </button>
       </div>
@@ -175,89 +148,8 @@ export default function Customers() {
         </div>
       )}
 
-      {/* DaisyUI Modal for adding a new customer */}
-      <dialog
-        id="add_customer_modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box max-w-2xl">
-          <h3 className="font-bold text-lg mb-6">Add New Customer</h3>
-
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
-              <label className="self-center font-medium text-right hidden md:block">
-                Customer Name
-              </label>
-              <div className="form-control w-full">
-                <label className="label md:hidden">
-                  <span className="label-text">Customer Name</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered w-full"
-                  value={newCustomer.name}
-                  onChange={(e) =>
-                    setNewCustomer({ ...newCustomer, name: e.target.value })
-                  }
-                  required
-                />
-              </div>
-
-              <label className="self-center font-medium text-right hidden md:block">
-                Phone Number
-              </label>
-              <div className="form-control w-full">
-                <label className="label md:hidden">
-                  <span className="label-text">Phone Number</span>
-                </label>
-                <input
-                  type="tel"
-                  className="input input-bordered w-full"
-                  value={newCustomer.phone}
-                  onChange={(e) =>
-                    setNewCustomer({ ...newCustomer, phone: e.target.value })
-                  }
-                  title="Please format like 123-456-7890"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn"
-                onClick={() => {
-                  const modal = document.getElementById(
-                    "add_customer_modal",
-                  ) as HTMLDialogElement;
-                  if (modal) modal.close();
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={createCustomerMutation.isPending}
-              >
-                {createCustomerMutation.isPending ? (
-                  <>
-                    <span className="loading loading-spinner loading-xs"></span>
-                    Saving...
-                  </>
-                ) : (
-                  "Save Customer"
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+      {/* Outlet for modal routes */}
+      <Outlet />
 
       {/* DaisyUI Modal for editing a customer */}
       <dialog
@@ -322,7 +214,7 @@ export default function Customers() {
                   onClick={() => {
                     setEditingCustomer(null);
                     const modal = document.getElementById(
-                      "edit_customer_modal",
+                      "edit_customer_modal"
                     ) as HTMLDialogElement;
                     if (modal) modal.close();
                   }}
@@ -386,7 +278,7 @@ export default function Customers() {
                   onClick={() => {
                     setViewingCustomer(null);
                     const modal = document.getElementById(
-                      "view_customer_modal",
+                      "view_customer_modal"
                     ) as HTMLDialogElement;
                     if (modal) modal.close();
                   }}
@@ -399,7 +291,7 @@ export default function Customers() {
                   onClick={() => {
                     // Close view modal
                     const viewModal = document.getElementById(
-                      "view_customer_modal",
+                      "view_customer_modal"
                     ) as HTMLDialogElement;
                     if (viewModal) viewModal.close();
 
