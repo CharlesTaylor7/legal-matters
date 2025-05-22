@@ -57,15 +57,13 @@ export default function CreateCustomer() {
               <label className="label md:hidden">
                 <span className="label-text">Phone Number</span>
               </label>
-              <PhoneNumberInput required />
-              <div className="text-error text-sm mt-1">
-                {newCustomer.phone &&
-                  !/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/.test(newCustomer.phone) && (
-                    <span>
-                      Please enter a valid phone number (XXX-XXX-XXXX)
-                    </span>
-                  )}
-              </div>
+              <PhoneNumberInput
+                required
+                value={newCustomer.phone}
+                onAccept={(value) =>
+                  setNewCustomer({ ...newCustomer, phone: value })
+                }
+              />
             </div>
           </div>
 

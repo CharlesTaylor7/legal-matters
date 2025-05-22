@@ -1,60 +1,30 @@
-import React, { useState, type ComponentProps } from "react";
-import { IMaskInput } from "react-imask";
-import {
-  parsePhoneNumberFromString,
-  getExampleNumber,
-  type CountryCode,
-} from "libphonenumber-js";
+import React, { type InputHTMLAttributes } from "react";
+import { useIMask } from "react-imask";
 
-interface Props extends ComponentProps<typeof InputMask> {
-  country: CountryCode;
+type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> & {
   className?: string;
-  required?: boolean;
-  // hide some inherited props; these are controlled by the wrapper
-  mask: never;
-  placeholder: never;
-}
+  value: string;
+  onChange: (value: string) => void;
+};
 
 export default function PhoneNumberInput(props: Props) {
-  const [isValid, setIsValid] = useState(true);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-
-    // Try to parse and validate using libphonenumber-js
-    const parsed = parsePhoneNumberFromString(raw, props.country);
-    const newIsValid = parsed?.isValid() ?? false;
-    setIsValid(newIsValid);
-
-    // Call parent onChange if provided
-    if (props.onChange) {
-      props.onChange(e);
-    }
+  const onAccept = function (...args) {
+    console.log(args);
+    props.onChange(args);
   };
-
-  // Get example phone number for the specified country
-  const exampleNumber = getExampleNumber(props.country);
-  const placeholder = exampleNumber?.formatNational() || "";
-  const mask = exampleNumber?.formatNational().replace(/\d/g, "9") || "";
-
+  const mask = useIMask({
+    mask: "(000) 000-0000",
+    onAccept,
+    placeholderChar: "_",
+  });
   return (
-    <div>
-      <IMaskInput>
-        maskChar="_"
-        {...props}
-        onChange={handleChange}
-        mask={mask}
-        placeholder={placeholder}
-      >
-        {(inputProps: ComponentProps<"input">) => (
-          <input
-            {...inputProps}
-            required={props.required}
-            type="tel"
-            className={`input input-bordered ${isValid ? "input-success" : "input-warning"} ${props.className ?? ""}`}
-          />
-        )}
-      </IMaskInput>
-    </div>
+    <input
+      type="tel"
+      // @ts-expect-error imask
+      ref={mask.ref}
+      className={`input input-bordered w-full ${props.className ?? ""}`}
+      value={mask.value}
+      onInput={(e) => mask.setValue(e.target.value)}
+    />
   );
 }
