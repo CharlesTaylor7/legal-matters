@@ -127,7 +127,7 @@ export const useCreateMatterMutation = (): UseMutationResult<
       );
       return response.data;
     },
-    onSuccess: (data, { customerId }) => {
+    onSuccess: (_data, { customerId }) => {
       // Invalidate matters query to refetch the list
       queryClient.invalidateQueries({
         queryKey: ["customers", customerId, "matters"],
@@ -166,7 +166,7 @@ export const useUpdateMatterMutation = (): UseMutationResult<
       );
       return response.data;
     },
-    onSuccess: (data, { customerId, matterId }) => {
+    onSuccess: (_data, { customerId, matterId }) => {
       // Invalidate specific matter query
       queryClient.invalidateQueries({
         queryKey: ["customers", customerId, "matters", matterId],

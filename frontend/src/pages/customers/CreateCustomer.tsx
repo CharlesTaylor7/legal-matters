@@ -60,7 +60,7 @@ export default function CreateCustomer() {
               <PhoneNumberInput
                 required
                 value={newCustomer.phone}
-                onAccept={(value) =>
+                onChange={(value) =>
                   setNewCustomer({ ...newCustomer, phone: value })
                 }
               />

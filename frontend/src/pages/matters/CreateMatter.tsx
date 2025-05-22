@@ -13,7 +13,6 @@ export default function CreateMatter() {
     title: "",
     description: "",
     openDate: new Date().toISOString().split("T")[0],
-    // Always set status to Open for new matters
     status: "Open",
   });
 
@@ -21,21 +20,10 @@ export default function CreateMatter() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerIdNum) {
-      navigate("/matters");
-      return;
-    }
-
-    // Ensure status is always Open for new matters
-    const dataWithOpenStatus = {
-      ...formData,
-      status: "Open",
-    };
-
     createMatterMutation.mutate(
       {
         customerId: customerIdNum,
-        data: dataWithOpenStatus,
+        data: formData,
       },
       {
         onSuccess: () => {

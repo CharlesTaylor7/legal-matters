@@ -138,9 +138,7 @@ public class CustomerController : ControllerBase
 
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-        var customer = await _context
-            .Customers
-            .FirstOrDefaultAsync(c => c.Id == customerId);
+        var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
 
         if (customer == null)
         {
@@ -157,16 +155,17 @@ public class CustomerController : ControllerBase
         }
 
         // Get count of open matters for this customer
-        var openMattersCount = await _context.Matters
-            .CountAsync(m => m.CustomerId == customerId && m.Status == MatterStatus.Open);
-            
+        var openMattersCount = await _context.Matters.CountAsync(m =>
+            m.CustomerId == customerId && m.Status == MatterStatus.Open
+        );
+
         var response = new CustomerResponse
         {
             Id = customer.Id,
             Name = customer.Name,
             Phone = _phoneNumberService.FormatPhoneNumber(customer.Phone),
             LawyerId = customer.LawyerId,
-            OpenMattersCount = openMattersCount
+            OpenMattersCount = openMattersCount,
         };
 
         return Ok(response);

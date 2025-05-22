@@ -1,24 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useLoginMutation } from "../api/auth";
 
 export default function Login() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   // Use the login mutation hook
   const loginMutation = useLoginMutation();
-
-  // Set up side effects for the mutation
-  loginMutation.onSuccess = () => {
-    navigate("/");
-  };
-
-  loginMutation.onError = (error) => {
-    setErrorMessage(error.message || "Login failed. Please try again.");
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

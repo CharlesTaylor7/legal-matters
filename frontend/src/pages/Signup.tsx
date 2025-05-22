@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useSignupMutation } from "../api/auth";
 
 export default function Signup() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firmName, setFirmName] = useState("");
@@ -11,15 +10,6 @@ export default function Signup() {
 
   // Use the signup mutation hook
   const signupMutation = useSignupMutation();
-
-  // Set up side effects for the mutation
-  signupMutation.onSuccess = () => {
-    navigate("/");
-  };
-
-  signupMutation.onError = (error) => {
-    setErrorMessage(error.message || "Signup failed. Please try again.");
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import type { SuccessResponse } from "./types";
-1 satisfies never;
 
 export interface CustomerResponse {
   id: number;
@@ -58,14 +57,14 @@ export const useCustomersQuery = (): UseQueryResult<
  * @returns UseQueryResult with the customer data
  */
 export const useCustomerQuery = (
-  id: number
+  id: number,
 ): UseQueryResult<CustomerResponse, Error> => {
   return useQuery({
     queryKey: ["customers", id],
     queryFn: async ({ signal }) => {
       const response = await axios.get<CustomerResponse>(
         `/api/customers/${id}`,
-        { signal }
+        { signal },
       );
       return response.data;
     },
@@ -89,7 +88,7 @@ export const useCreateCustomerMutation = (): UseMutationResult<
     mutationFn: async (customerData: CustomerCreateRequest) => {
       const response = await axios.post<CustomerResponse>(
         "/api/customers",
-        customerData
+        customerData,
       );
       return response.data;
     },
@@ -122,7 +121,7 @@ export const useUpdateCustomerMutation = (): UseMutationResult<
     }) => {
       const response = await axios.put<CustomerResponse>(
         `/api/customers/${id}`,
-        data
+        data,
       );
       return response.data;
     },
@@ -149,7 +148,7 @@ export const useDeleteCustomerMutation = (): UseMutationResult<
   return useMutation({
     mutationFn: async (id: number) => {
       const response = await axios.delete<SuccessResponse>(
-        `/api/customers/${id}`
+        `/api/customers/${id}`,
       );
       return response.data;
     },
