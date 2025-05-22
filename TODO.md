@@ -1,6 +1,7 @@
 ## Issues
 - [ ] status's are inconsistent between front and  backend 
 - [ ] error handling is not up to snuff and revise client side handling
+- [ ] Remove the interface aliases in the api calls
 
 ## UI Tweaks
 - [ ] empty Banner stretches across the screen. Maybe shrink it down a bit?

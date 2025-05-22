@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router";
-import { useCustomersQuery, type Customer } from "../api/customers";
+import { useCustomersQuery, type CustomerResponse } from "../api/customers";
 
 export default function Customers() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function Customers() {
   } = useCustomersQuery();
 
   // Navigate to edit customer page
-  const handleEdit = (customer: Customer) => {
+  const handleEdit = (customer: CustomerResponse) => {
     navigate(`edit/${customer.id}`);
   };
 

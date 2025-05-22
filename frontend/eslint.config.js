@@ -8,11 +8,7 @@ import prettier from "eslint-plugin-prettier/recommended";
 export default tseslint.config(
   { ignores: ["dist"] },
   {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommended,
-      prettier,
-    ],
+    extends: [js.configs.recommended, tseslint.configs.recommended, prettier],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
@@ -24,6 +20,18 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // Disallow TypeScript namespaces
+      "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
+
+      // Disallow TypeScript enums
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TSEnumDeclaration",
+          message:
+            "Do not use TypeScript enums. Use union types or objects instead.",
+        },
+      ],
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

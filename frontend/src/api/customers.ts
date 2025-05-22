@@ -5,7 +5,8 @@ import {
   type UseMutationResult,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { ErrorResponse, SuccessResponse } from "./types";
+import axios from "axios";
+import type { SuccessResponse } from "./types";
 
 export interface CustomerResponse {
   id: number;
@@ -14,10 +15,6 @@ export interface CustomerResponse {
   lawyerId: number;
   openMattersCount: number;
 }
-
-// Alias for backward compatibility
-export type Customer = CustomerResponse;
-
 export interface Matter {
   id: number;
   title: string;
@@ -43,9 +40,6 @@ export interface CustomerUpdateRequest {
   phone: string;
 }
 
-// Aliases for backward compatibility
-export type CustomerInput = CustomerCreateRequest;
-
 /**
  * Custom hook to fetch customers
  * @returns UseQueryResult with the customers data
@@ -56,14 +50,11 @@ export const useCustomersQuery = (): UseQueryResult<
 > => {
   return useQuery({
     queryKey: ["customers"],
-    queryFn: async () => {
-      const response = await fetch("/api/customers");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch customers");
-      }
-
-      return response.json() as Promise<CustomerResponse[]>;
+    queryFn: async ({ signal }) => {
+      const response = await axios.get<CustomerResponse[]>("/api/customers", {
+        signal,
+      });
+      return response.data;
     },
   });
 };
@@ -78,14 +69,12 @@ export const useCustomerQuery = (
 ): UseQueryResult<CustomerDetailResponse, Error> => {
   return useQuery({
     queryKey: ["customers", id],
-    queryFn: async () => {
-      const response = await fetch(`/api/customers/${id}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch customer");
-      }
-
-      return response.json() as Promise<Customer>;
+    queryFn: async ({ signal }) => {
+      const response = await axios.get<CustomerDetailResponse>(
+        `/api/customers/${id}`,
+        { signal },
+      );
+      return response.data;
     },
     enabled: !!id, // Only run the query if id is provided
   });
@@ -105,22 +94,11 @@ export const useCreateCustomerMutation = (): UseMutationResult<
 
   return useMutation({
     mutationFn: async (customerData: CustomerCreateRequest) => {
-      const response = await fetch("/api/customers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(customerData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to create customer");
-      }
-
-      return response.json() as Promise<Customer>;
+      const response = await axios.post<CustomerResponse>(
+        "/api/customers",
+        customerData,
+      );
+      return response.data;
     },
     onSuccess: () => {
       // Invalidate customers query to refetch the list
@@ -149,22 +127,11 @@ export const useUpdateCustomerMutation = (): UseMutationResult<
       id: number;
       data: CustomerUpdateRequest;
     }) => {
-      const response = await fetch(`/api/customers/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to update customer");
-      }
-
-      return response.json() as Promise<Customer>;
+      const response = await axios.put<CustomerResponse>(
+        `/api/customers/${id}`,
+        data,
+      );
+      return response.data;
     },
     onSuccess: (data) => {
       // Invalidate specific customer query and the customers list
@@ -188,18 +155,10 @@ export const useDeleteCustomerMutation = (): UseMutationResult<
 
   return useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/customers/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({}) as ErrorResponse);
-        throw new Error(errorData.message || "Failed to delete customer");
-      }
-
-      return response.json() as Promise<SuccessResponse>;
+      const response = await axios.delete<SuccessResponse>(
+        `/api/customers/${id}`,
+      );
+      return response.data;
     },
     onSuccess: (_, id) => {
       // Invalidate customers query to refetch the list
