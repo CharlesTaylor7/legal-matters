@@ -27,3 +27,19 @@ export default function FooComponent(props: FooProps) {
 The api is served from the host as the app. Please do not set fetch "credentials": true.
 
 
+
+## Error handling
+Do not put error handling inline.
+There is a global error handling system using an axios interceptor to show a toast message. That will be sufficient in 99% of cases. 
+
+## Loading states
+Use <div className="spinner" />
+
+## forms
+We are using axios and custom hooks making http requests for the server.
+But when making a form still make sure client side form validation is run.
+
+Set required attrbiute when relevant, and use the title attribute if the input has a custom pattern for validation.
+
+
+

@@ -6,7 +6,7 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> & {
   onChange: (value: string) => void;
 };
 
-export default function PhoneInput(props: Props) {
+export default function PhoneNumberInput(props: Props) {
   const { onChange, ...inputProps } = props;
   return (
     <MaskedStyledInput
@@ -20,6 +20,13 @@ export default function PhoneInput(props: Props) {
 }
 
 const MaskedStyledInput = IMaskMixin(({ inputRef, ...props }) => (
-  // @ts-expect-error imask's ref type doesn't match, but this is how the library is used
-  <input type="tel" className="input w-full" {...props} ref={inputRef} />
+  <input
+    type="tel"
+    className="input w-full"
+    {...props}
+    // @ts-expect-error imask's ref type doesn't match, but this is how the library is used
+    ref={inputRef}
+    pattern="\(\d{3}\) \d{3}-\d{4}"
+    title="10 digit US Phone number expected"
+  />
 ));
