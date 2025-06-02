@@ -10,6 +10,7 @@ export function configureAxios() {
       if (error.status !== 401 && error.code !== "ERR_CANCELED") {
         toast.error(`${error.config?.metadata.action ?? "Request"} Failed`);
       }
+      console.log(error.status);
       return Promise.reject(error);
     },
   );

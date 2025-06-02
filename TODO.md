@@ -1,4 +1,6 @@
 - [x] Try out Sonner for toast messages
+- [x] Apply dev tools
+- [ ] Audit backend, do we return forbidden for ownership issues?
 - [ ] Apply error handling principles
   - inline errors for fields
   - toast errors for general errors
