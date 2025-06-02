@@ -172,7 +172,6 @@ public class CustomerController : ControllerBase
             return NotFound(new { message = "Customer not found" });
         }
 
-
         // Update customer properties
         customer.Name = request.Name;
         customer.Phone = _phoneNumberService.NormalizePhoneNumber(request.Phone);
@@ -214,7 +213,6 @@ public class CustomerController : ControllerBase
         {
             return NotFound(new { message = "Customer not found" });
         }
-
 
         _context.Customers.Remove(customer);
         await _context.SaveChangesAsync();

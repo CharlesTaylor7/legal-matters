@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LegalMatters.Authorization;
 
-public class CustomerAccessRequirement : IAuthorizationRequirement
-{}
+public class CustomerAccessRequirement : IAuthorizationRequirement { }
 
 public class CustomerAccessHandler : AuthorizationHandler<CustomerAccessRequirement>
 {

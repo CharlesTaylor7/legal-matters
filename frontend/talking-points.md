@@ -8,6 +8,12 @@ Easy REST API w/ Swagger UI.
 Easy Authentication/Identity/Role management.
 
 
+### Login after signup
+I missed this in my initial submission.
+But I got this addressed on my refinements branch.
+
+
+
 ### Role Management
 Two roles, admin & Lawyer.
 

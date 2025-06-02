@@ -67,7 +67,6 @@ public class AuthController : ControllerBase
             );
             return BadRequest(ModelState);
         }
-    
 
         await _signInManager.PasswordSignInAsync(
             request.Email,
@@ -75,8 +74,6 @@ public class AuthController : ControllerBase
             isPersistent: true,
             lockoutOnFailure: false
         );
-
-
 
         return Ok(new SuccessResponse { Message = "User created successfully" });
     }
