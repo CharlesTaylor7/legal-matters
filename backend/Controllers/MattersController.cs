@@ -11,7 +11,7 @@ namespace LegalMatters.Controllers;
 
 [ApiController]
 [Route("api/customers/{customerId}/matters")]
-[Authorize]
+[Authorize(Policies.AdminOrAssignedToCustomer)]
 public class MattersController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -35,25 +35,11 @@ public class MattersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<MatterResponse>>> GetMatters(int customerId)
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
-        }
-
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid("You are not authorized to get matters for this customer");
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
         // Get matters for the customer
@@ -90,28 +76,14 @@ public class MattersController : ControllerBase
         [FromBody] MatterCreateRequest request
     )
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Now validate the model
+        // Validate the model
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -160,32 +132,17 @@ public class MattersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<MatterResponse>> GetMatter(int customerId, int matterId)
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Get the matter
+        // Check if matter exists and belongs to the customer
         var matter = await _context.Matters.FirstOrDefaultAsync(m =>
             m.Id == matterId && m.CustomerId == customerId
         );
-
         if (matter == null)
         {
             return NotFound(new ErrorResponse { Message = "Matter not found" });
@@ -222,13 +179,6 @@ public class MattersController : ControllerBase
         [FromBody] MatterUpdateRequest request
     )
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new ErrorResponse { Message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
@@ -245,14 +195,7 @@ public class MattersController : ControllerBase
             return NotFound(new ErrorResponse { Message = "Matter not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Now validate the model
+        // Validate the model
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
