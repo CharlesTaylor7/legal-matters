@@ -3,7 +3,6 @@ using LegalMatters.Data;
 using LegalMatters.Models;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +53,7 @@ public class MattersController : ControllerBase
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return Forbid();
+            return Forbid("You are not authorized to get matters for this customer");
         }
 
         // Get matters for the customer

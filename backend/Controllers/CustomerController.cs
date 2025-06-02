@@ -142,9 +142,8 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to view this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to view this customer" }
+            return Forbid(
+                "You are not authorized to view this customer" 
             );
         }
 
@@ -198,9 +197,8 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to update this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to update this customer" }
+            return Forbid(
+                "You are not authorized to update this customer"
             );
         }
 
@@ -250,9 +248,8 @@ public class CustomerController : ControllerBase
         // Check if user is authorized to delete this customer
         if (!isAdmin && customer.LawyerId != user.Id)
         {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to delete this customer" }
+            return Forbid(
+                "You are not authorized to delete this customer" 
             );
         }
 
