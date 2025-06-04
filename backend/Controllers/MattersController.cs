@@ -3,7 +3,6 @@ using LegalMatters.Data;
 using LegalMatters.Models;
 using LegalMatters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,7 @@ namespace LegalMatters.Controllers;
 
 [ApiController]
 [Route("api/customers/{customerId}/matters")]
-[Authorize]
+[Authorize(Policies.AdminOrAssignedToCustomer)]
 public class MattersController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -36,25 +35,11 @@ public class MattersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<MatterResponse>>> GetMatters(int customerId)
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
-        }
-
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
         // Get matters for the customer
@@ -68,6 +53,7 @@ public class MattersController : ControllerBase
                 Description = m.Description,
                 OpenDate = m.OpenDate,
                 Status = m.Status,
+                CustomerId = m.CustomerId
             })
             .ToList();
 
@@ -91,28 +77,14 @@ public class MattersController : ControllerBase
         [FromBody] MatterCreateRequest request
     )
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Now validate the model
+        // Validate the model
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -139,6 +111,7 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return CreatedAtAction(
@@ -161,32 +134,17 @@ public class MattersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<MatterResponse>> GetMatter(int customerId, int matterId)
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found" });
+            return NotFound(new ErrorResponse { Message = "Customer not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Get the matter
+        // Check if matter exists and belongs to the customer
         var matter = await _context.Matters.FirstOrDefaultAsync(m =>
             m.Id == matterId && m.CustomerId == customerId
         );
-
         if (matter == null)
         {
             return NotFound(new ErrorResponse { Message = "Matter not found" });
@@ -199,6 +157,7 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return Ok(response);
@@ -223,13 +182,6 @@ public class MattersController : ControllerBase
         [FromBody] MatterUpdateRequest request
     )
     {
-        // Validate permissions first
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new ErrorResponse { Message = "Not authenticated" });
-        }
-
         // Check if customer exists
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
@@ -246,14 +198,7 @@ public class MattersController : ControllerBase
             return NotFound(new ErrorResponse { Message = "Matter not found" });
         }
 
-        // Check authorization - Admins can access all, lawyers only their customers
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return Forbid();
-        }
-
-        // Now validate the model
+        // Validate the model
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -303,10 +248,33 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// Delete an existing matter
+    /// </summary>
+    /// <param name="customerId">ID of the customer</param>
+    /// <param name="matterId">ID of the matter to delete</param>
+    /// <returns>Updated matter</returns>
+    [HttpDelete("{matterId}")]
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SuccessResponse>> DeleteMatter(
+        int customerId,
+        int matterId
+    )
+    {
+        await _context.Matters.Where(matter => matter.Id == matterId).ExecuteDeleteAsync();
+        return Ok(new SuccessResponse {Message = "Matter deleted"});
+    }
+
 
     private bool MatterExists(int id)
     {
@@ -342,4 +310,5 @@ public record MatterResponse
     public required string Description { get; set; }
     public DateTime OpenDate { get; set; }
     public required MatterStatus Status { get; set; }
+    public required int CustomerId { get; set; }
 }

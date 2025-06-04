@@ -118,34 +118,18 @@ public class CustomerController : ControllerBase
     /// <param name="customerId">ID of the customer to retrieve</param>
     /// <returns>Customer details</returns>
     [HttpGet("{customerId}")]
+    [Authorize(Policies.AdminOrAssignedToCustomer)]
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CustomerResponse>> GetCustomer(int customerId)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-
         var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
 
         if (customer == null)
         {
             return NotFound(new { message = "Customer not found" });
-        }
-
-        // Check if user is authorized to view this customer
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to view this customer" }
-            );
         }
 
         var response = new CustomerResponse
@@ -166,6 +150,7 @@ public class CustomerController : ControllerBase
     /// <param name="request">Customer update request</param>
     /// <returns>Updated customer</returns>
     [HttpPut("{customerId}")]
+    [Authorize(Policies.AdminOrAssignedToCustomer)]
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -176,32 +161,15 @@ public class CustomerController : ControllerBase
         [FromBody] CustomerUpdateRequest request
     )
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Not authenticated" });
-        }
-
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
             return NotFound(new { message = "Customer not found" });
-        }
-
-        // Check if user is authorized to update this customer
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to update this customer" }
-            );
         }
 
         // Update customer properties
@@ -227,6 +195,7 @@ public class CustomerController : ControllerBase
     /// <param name="customerId">ID of the customer to delete</param>
     /// <returns>Success message</returns>
     [HttpDelete("{customerId}")]
+    [Authorize(Policies.AdminOrAssignedToCustomer)]
     [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
@@ -239,21 +208,10 @@ public class CustomerController : ControllerBase
             return Unauthorized(new { message = "Not authenticated" });
         }
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
             return NotFound(new { message = "Customer not found" });
-        }
-
-        // Check if user is authorized to delete this customer
-        if (!isAdmin && customer.LawyerId != user.Id)
-        {
-            return StatusCode(
-                StatusCodes.Status403Forbidden,
-                new ErrorResponse { Message = "You are not authorized to delete this customer" }
-            );
         }
 
         _context.Customers.Remove(customer);

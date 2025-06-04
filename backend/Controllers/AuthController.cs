@@ -68,6 +68,13 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        await _signInManager.PasswordSignInAsync(
+            request.Email,
+            request.Password,
+            isPersistent: true,
+            lockoutOnFailure: false
+        );
+
         return Ok(new SuccessResponse { Message = "User created successfully" });
     }
 
@@ -89,7 +96,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SuccessResponse>> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)
@@ -106,7 +113,7 @@ public class AuthController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return Unauthorized(new ErrorResponse { Message = "Invalid email or password" });
+            return BadRequest(new ErrorResponse { Message = "Invalid email or password" });
         }
 
         return Ok(new SuccessResponse { Message = "Login successful" });

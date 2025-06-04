@@ -1,11 +1,11 @@
 using System.Reflection;
 using dotenv.net;
+using LegalMatters.Authorization;
 using LegalMatters.Data;
 using LegalMatters.Models;
 using LegalMatters.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -67,7 +67,10 @@ WebApplicationBuilder Configure()
     // Register repositories
 
     // Register application services
-    builder.Services.AddScoped<IPhoneNumberService, USPhoneNumberService>();
+    builder.Services.AddSingleton<IPhoneNumberService, USPhoneNumberService>();
+
+    // Register authorization handlers
+    builder.Services.AddScoped<IAuthorizationHandler, CustomerAccessHandler>();
 
     // Add health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
@@ -106,8 +109,21 @@ WebApplicationBuilder Configure()
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return Task.CompletedTask;
         };
+
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
     });
-    builder.Services.AddAuthorization();
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy(
+            Policies.AdminOrAssignedToCustomer,
+            policy => policy.Requirements.Add(new CustomerAccessRequirement())
+        );
+    });
 
     return builder;
 }

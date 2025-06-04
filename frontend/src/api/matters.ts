@@ -65,13 +65,12 @@ export const useMattersQuery = (
 ): UseQueryResult<MatterResponse[], Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters"],
-    queryFn: async ({ signal }) => {
-      const response = await axios.get<MatterResponse[]>(
-        `/api/customers/${customerId}/matters`,
-        { signal },
-      );
-      return response.data;
-    },
+    queryFn: ({ signal }) =>
+      axios
+        .get<
+          MatterResponse[]
+        >(`/api/customers/${customerId}/matters`, { signal, metadata: { action: "Fetching Matters" } })
+        .then((res) => res.data),
     enabled: !!customerId, // Only run the query if customerId is provided
   });
 };
@@ -88,14 +87,20 @@ export const useMatterQuery = (
 ): UseQueryResult<MatterDetailResponse, Error> => {
   return useQuery({
     queryKey: ["customers", customerId, "matters", matterId],
-    queryFn: async ({ signal }) => {
-      const response = await axios.get<MatterDetailResponse>(
-        `/api/customers/${customerId}/matters/${matterId}`,
-        { signal },
-      );
-      return response.data;
-    },
-    enabled: !!customerId && !!matterId, // Only run the query if both IDs are provided
+    queryFn: ({ signal }) =>
+      axios
+        .get<MatterDetailResponse>(
+          `/api/customers/${customerId}/matters/${matterId}`,
+          {
+            signal,
+            metadata: {
+              action: "Fetching Matter",
+            },
+          },
+        )
+        .then((res) => res.data),
+    // Only run the query if both IDs are provided
+    enabled: !!customerId && !!matterId,
   });
 };
 
@@ -118,20 +123,17 @@ export const useCreateMatterMutation = (): UseMutationResult<
     }: {
       customerId: number;
       data: MatterCreateRequest;
-    }) => {
-      const response = await axios.post<MatterResponse>(
-        `/api/customers/${customerId}/matters`,
-        data,
-      );
-      return response.data;
-    },
+    }) =>
+      axios
+        .post<MatterResponse>(`/api/customers/${customerId}/matters`, data, {
+          metadata: { action: "Creating Matter" },
+        })
+        .then((res) => res.data),
     onSuccess: (_data, { customerId }) => {
       // Invalidate matters query to refetch the list
       queryClient.invalidateQueries({
         queryKey: ["customers", customerId, "matters"],
       });
-      // Invalidate customer detail to update the matters list there
-      queryClient.invalidateQueries({ queryKey: ["customers", customerId] });
     },
   });
 };
@@ -157,24 +159,55 @@ export const useUpdateMatterMutation = (): UseMutationResult<
       customerId: number;
       matterId: number;
       data: MatterUpdateRequest;
-    }) => {
-      const response = await axios.put<MatterResponse>(
-        `/api/customers/${customerId}/matters/${matterId}`,
-        data,
-      );
-      return response.data;
-    },
-    onSuccess: (_data, { customerId, matterId }) => {
-      // Invalidate specific matter query
-      queryClient.invalidateQueries({
-        queryKey: ["customers", customerId, "matters", matterId],
-      });
+    }) =>
+      axios
+        .put<MatterResponse>(
+          `/api/customers/${customerId}/matters/${matterId}`,
+          data,
+          { metadata: { action: "Updating Matter" } },
+        )
+        .then((res) => res.data),
+    onSuccess: (_data, { customerId }) => {
       // Invalidate matters list query
       queryClient.invalidateQueries({
         queryKey: ["customers", customerId, "matters"],
       });
-      // Invalidate customer detail to update the matters list there
-      queryClient.invalidateQueries({ queryKey: ["customers", customerId] });
+    },
+  });
+};
+
+/**
+ * Custom hook to update an existing matter
+ * @returns UseMutationResult for updating a matter
+ */
+export const useDeleteMatterMutation = (): UseMutationResult<
+  MatterResponse,
+  Error,
+  { customerId: number; matterId: number },
+  unknown
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      customerId,
+      matterId,
+    }: {
+      customerId: number;
+      matterId: number;
+    }) =>
+      axios
+        .delete<MatterResponse>(
+          `/api/customers/${customerId}/matters/${matterId}`,
+          {},
+          { metadata: { action: "Deleting Matter" } },
+        )
+        .then((res) => res.data),
+    onSuccess: (_data, { customerId }) => {
+      // Invalidate matters list query
+      queryClient.invalidateQueries({
+        queryKey: ["customers", customerId, "matters"],
+      });
     },
   });
 };
