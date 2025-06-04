@@ -53,6 +53,7 @@ public class MattersController : ControllerBase
                 Description = m.Description,
                 OpenDate = m.OpenDate,
                 Status = m.Status,
+                CustomerId = m.CustomerId
             })
             .ToList();
 
@@ -110,6 +111,7 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return CreatedAtAction(
@@ -155,6 +157,7 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return Ok(response);
@@ -245,10 +248,33 @@ public class MattersController : ControllerBase
             Description = matter.Description ?? string.Empty,
             OpenDate = matter.OpenDate,
             Status = matter.Status,
+            CustomerId = matter.CustomerId
         };
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// Delete an existing matter
+    /// </summary>
+    /// <param name="customerId">ID of the customer</param>
+    /// <param name="matterId">ID of the matter to delete</param>
+    /// <returns>Updated matter</returns>
+    [HttpDelete("{matterId}")]
+    [ProducesResponseType(typeof(SuccessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SuccessResponse>> DeleteMatter(
+        int customerId,
+        int matterId
+    )
+    {
+        await _context.Matters.Where(matter => matter.Id == matterId).ExecuteDeleteAsync();
+        return Ok(new SuccessResponse {Message = "Matter deleted"});
+    }
+
 
     private bool MatterExists(int id)
     {
@@ -284,4 +310,5 @@ public record MatterResponse
     public required string Description { get; set; }
     public DateTime OpenDate { get; set; }
     public required MatterStatus Status { get; set; }
+    public required int CustomerId { get; set; }
 }

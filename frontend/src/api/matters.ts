@@ -175,3 +175,39 @@ export const useUpdateMatterMutation = (): UseMutationResult<
     },
   });
 };
+
+/**
+ * Custom hook to update an existing matter
+ * @returns UseMutationResult for updating a matter
+ */
+export const useDeleteMatterMutation = (): UseMutationResult<
+  MatterResponse,
+  Error,
+  { customerId: number; matterId: number },
+  unknown
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      customerId,
+      matterId,
+    }: {
+      customerId: number;
+      matterId: number;
+    }) =>
+      axios
+        .delete<MatterResponse>(
+          `/api/customers/${customerId}/matters/${matterId}`,
+          {},
+          { metadata: { action: "Deleting Matter" } },
+        )
+        .then((res) => res.data),
+    onSuccess: (_data, { customerId }) => {
+      // Invalidate matters list query
+      queryClient.invalidateQueries({
+        queryKey: ["customers", customerId, "matters"],
+      });
+    },
+  });
+};

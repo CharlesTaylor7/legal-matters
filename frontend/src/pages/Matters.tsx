@@ -1,12 +1,17 @@
 import { Outlet, useNavigate, useParams } from "react-router";
 import { useCustomerQuery } from "@/api/customers";
-import { useMattersQuery, type MatterStatus } from "@/api/matters";
+import {
+  useMattersQuery,
+  useDeleteMatterMutation,
+  type MatterStatus,
+} from "@/api/matters";
 
 export default function Matters() {
   const navigate = useNavigate();
   const { customerId } = useParams<{ customerId: string }>();
   const customerIdNum = Number(customerId);
 
+  const deleteMatterMutation = useDeleteMatterMutation();
   // Fetch customer details
   const {
     data: customer,
@@ -172,6 +177,17 @@ export default function Matters() {
                           onClick={() => handleEditMatter(matter.id)}
                         >
                           Edit
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline btn-error"
+                          onClick={() =>
+                            deleteMatterMutation.mutate({
+                              customerId: matter.customerId,
+                              matterId: matter.id,
+                            })
+                          }
+                        >
+                          Delete
                         </button>
                       </div>
                     </td>
